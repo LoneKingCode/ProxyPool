@@ -1,0 +1,39 @@
+﻿<!DOCTYPE html>
+
+<html lang="en" xmlns="http://www.w3.org/1999/xhtml">
+<head>
+    <meta charset="utf-8" />
+    <title></title>
+    <script src="/static/jquery/dist/jquery.min.js"></script>
+    <script>
+        function upload() {
+            file = document.getElementById("proxyfile").files[0];
+            proxies = $("#proxies").val()
+            formData = new FormData();
+            formData.append("proxyfile", file);
+            formData.append('proxies', proxies)
+            $.ajax({
+                contentType: "multipart/form-data",
+                url: "/upload",
+                type: "POST",
+                data: formData,
+                dataType: "text",
+                processData: false, // 告诉jQuery不要去处理发送的数据
+                contentType: false, // 告诉jQuery不要去设置Content-Type请求头
+                success: function (result) {
+                    result = JSON.parse(result)
+                    alert(result.msg)
+                }
+            });
+        }
+    </script>
+</head>
+<body>
+    <form action="" method="post" enctype="multipart/form-data">
+        <input name="proxyfile" type="file" id="proxyfile" />
+        <textarea id="proxies" style="width:200px;height:400px;"></textarea>
+        <input type="button" value="导入" onclick="upload() " />
+        <span>导入格式为一行一个 ip:端口</span>
+    </form>
+</body>
+</html>
