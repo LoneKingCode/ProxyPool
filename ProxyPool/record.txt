@@ -1,4 +1,5 @@
-chrome webdriver selenium
+linux chrome webdriver selenium
+自动创建数据库
 
 type：解析方式,取值 regular(正则表达式),xpath(xpath解析),module(自定义第三方模块解析)
 
@@ -13,8 +14,19 @@ http://www.ip3366.net/free/
 http://www.freeproxylists.net/zh/?u=50&page=2
 
 
-pip3 install gevent greenlet lxml IPy openpyxl requests pymysql flask selenium PyExecJS
+pip3 install gevent greenlet lxml IPy openpyxl requests pymysql flask selenium PyExecJS psutil
+
+使用pyexecjs需要
+下载：wget https://nodejs.org/dist/v8.11.4/node-v8.11.4.tar.gz
+tar -xvf node-v8.11.4.tar.gz
+安装Node：cd node-v8.11.4 && ./configure --prefix=/usr/local/node; make install
+设置环境变量：
+export EXECJS_RUNTIME=/usr/local/node
+ln -s /usr/local/node/bin/node /usr/bin/node
+
+
 
 PYTHONIOENCODING=utf-8 python3 start.py
 
 中文乱码 https://www.cnblogs.com/freelandun/p/7882087.html
+

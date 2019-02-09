@@ -16,7 +16,8 @@ API_SERVER_PORT = 8000
 #xpath，regular：正则表达式，custom：自定义方法，在crawler.parser.ParserExtension中定义
 #cookie参数 secret_cookie (有些网站通过第一次访问时返回JS代码来生成新的cookie 之后都需要带上这个cookie访问
 #不然就返回521错误)
-UrlList = [{
+UrlList = [
+    {
         'name':'开心代理',
         'urls':['http://ip.kxdaili.com/dailiip/%s/%s.html#ip' % (t,i) for t in
         range(1,3) for i in range(1,11)],
@@ -119,7 +120,7 @@ PROCESS_CHECK_MAX = 8
 #连接超时
 TIMEOUT = 8
 #爬虫抓取网页数据重试次数
-RETRY_TIME = 5
+RETRY_TIME = 3
 
 #获取本机IP
 TEST_IP = 'http://httpbin.org/ip'

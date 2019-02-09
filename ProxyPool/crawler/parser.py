@@ -116,4 +116,4 @@ class ParserExtension(object):
         return proxylist
 
 if __name__ == '__main__':
-    a = Parser.get_proxy_data('http://www.66ip.cn/index.html',UrlList[0])
+    a = Parser.get_proxy_data('http://www.xicidaili.com/nn/2',UrlList[6])

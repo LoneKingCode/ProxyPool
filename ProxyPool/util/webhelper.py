@@ -50,10 +50,12 @@ class WebHelper(object):
         headers = HttpHeader
         retry_time = 0
         cookies = None
+        err_msg = ''
         while retry_time < RETRY_TIME:
             try:
                 #这种加密第一次会返回JS代码 用于生成新的COOKIE
                 if secret_cookie:
+                    headers['Cookie'] = ''
                     r = requests.get(url,headers=headers,timeout=TIMEOUT)
                     r.encoding = chardet.detect(r.content)['encoding']
                     secret_js = r.text
@@ -65,30 +67,31 @@ class WebHelper(object):
                 r = requests.get(url,headers=headers,timeout=TIMEOUT)
                 r.encoding = chardet.detect(r.content)['encoding']
                 if (not r.ok) or len(r.content) < 500:
-                    raise ConnectionError
+                    raise ConnectionError('HTTP状态错误或内容过短，status_code:{0},content:{1}'.format(r.status_code,r.text))
                 else:
                     return r.text
 
             except Exception as e:
+                err_msg+=str(e) + ' '
                 proxies = sqlhelper.get({'country':'国外'},10)
                 if not proxies:
                     continue
                 try:
                     proxy = random.choice(proxies)
-                    ip = proxy['ip']
-                    port = proxy['port']
+                    ip ='119.76.129.179' # proxy['ip']
+                    port ='8080' # proxy['port']
                     proxies = {"http": "http://%s:%s" % (ip, port), "https":"https://%s:%s" % (ip, port)}
                     r = requests.get(url=url, headers=headers,timeout=TIMEOUT, proxies=proxies)
                     r.encoding = chardet.detect(r.content)['encoding']
                     if (not r.ok) or len(r.content) < 500:
-                        raise ConnectionError
+                        raise ConnectionError('HTTP状态错误或内容过短，status_code:{0},content:{1}'.format(r.status_code,r.text))
                     else:
                         return r.text
                 except Exception as e:
                     pass
             time.sleep(0.5)
             retry_time +=1
-        LogHelper.error('获取' + url + '内容失败')
+        LogHelper.error('获取' + url + '内容失败,错误信息:' + err_msg)
         print('获取' + url + '内容失败')
         return None
 
@@ -163,5 +166,8 @@ class WebHelper(object):
         return content['origin']
 
 if __name__ == '__main__':
-    a = WebHelper.get_html('http://www.66ip.cn/areaindex_20/1.html',True)
+    for x in range(1,60):
+        a = WebHelper.get_html('http://www.xicidaili.com/nn/2')
+        time.sleep(0.5)
+
     b = 1

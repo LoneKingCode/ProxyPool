@@ -105,7 +105,7 @@ class ProxyCrawler(object):
         for url in urls:
             url_proxy_data = Parser.get_proxy_data(url,urldata)
             proxy_list = proxy_list + url_proxy_data
-            time.sleep(0.5)
+            time.sleep(1.5)             #酌情修改 有的网站限制的死
 
         proxy_count = len(proxy_list)
 
