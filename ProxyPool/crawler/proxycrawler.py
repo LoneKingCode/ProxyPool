@@ -84,20 +84,6 @@ class ProxyCrawler(object):
                             crawltask = []
                     gevent.joinall(crawltask)
 
-
-                    #for urldata in config.UrlList:
-                    #    crawltask.append(Process(target=self.crawl,args=(urldata,)))
-                    #    if len(crawltask) >= config.CRAWL_TASK:
-                    #        for task in crawltask:
-                    #            task.start()
-                    #        for task in crawltask:
-                    #            task.join()
-                    #        crawltask = []
-                    #for task in crawltask:
-                    #    task.start()
-                    #for task in crawltask:
-                    #    task.join()
-
                     print('>>>采集网站数据完成\n')
                     self.finish = True
                     self.last_end_datetime = datetime.now()
@@ -107,8 +93,7 @@ class ProxyCrawler(object):
                     self.last_end_datetime = datetime.now()
             else:
                 print('>>>等待执行，下次任务执行还有 %d 分钟' % (config.CRAWL_INTERVAL - m_diff))
-
-            time.sleep(60)
+            time.sleep(10)
 
     def crawl(self,urldata):
         name = urldata['name']
@@ -121,17 +106,6 @@ class ProxyCrawler(object):
             url_proxy_data = Parser.get_proxy_data(url,urldata)
             proxy_list = proxy_list + url_proxy_data
             time.sleep(0.5)
-
-        #crawltask = []
-        #for url in urls:
-        #    crawltask.append(gevent.spawn(Parser.get_proxy_data,url,urldata))
-        #    if len(crawltask) >= config.CRAWL_URL_TASK:
-        #        gevent.joinall(crawltask)
-        #        crawltask = []
-        #gevent.joinall(crawltask)
-
-        #for task in crawltask:
-        #    proxy_list += task.value
 
         proxy_count = len(proxy_list)
 

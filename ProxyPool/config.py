@@ -14,8 +14,9 @@ API_SERVER_PORT = 8000
 
 #网址采集规则
 #xpath，regular：正则表达式，custom：自定义方法，在crawler.parser.ParserExtension中定义
-UrlList = [
-    {
+#cookie参数 secret_cookie (有些网站通过第一次访问时返回JS代码来生成新的cookie 之后都需要带上这个cookie访问
+#不然就返回521错误)
+UrlList = [{
         'name':'开心代理',
         'urls':['http://ip.kxdaili.com/dailiip/%s/%s.html#ip' % (t,i) for t in
         range(1,3) for i in range(1,11)],
@@ -28,23 +29,27 @@ UrlList = [
         'urls':['http://www.89ip.cn/index_%s.html' % i for i in range(1,2)],
         'type':'xpath',
         'pattern':'//table[@class="layui-table"]//tr[position()>1]',
-        'position':{'ip':'./td[1]','port':'./td[2]','type':'','protocol':'',}
+        'position':{'ip':'./td[1]','port':'./td[2]','type':'','protocol':'',},
     },
-   #设置cookie都不行....
-    #{
-    #    'name':'66免费代理网',
-    #    'urls': ['http://www.66ip.cn/%s.html' % n for n in ['index'] + list(range(2, 3))],
-    #    'type': 'xpath',
-    #    'pattern': ".//*[@id='main']/div/div[1]/table/tbody/tr[position()>1]",
-    #    'position': {'ip': './td[1]', 'port': './td[2]', 'type': './td[4]', 'protocol': ''}
-    #},
-    #{
-    #    'name':'66免费代理网',
-    #    'urls': ['http://www.66ip.cn/areaindex_%s/%s.html' % (m, n) for m in range(1, 35) for n in range(1, 3)],
-    #    'type': 'xpath',
-    #    'pattern': ".//*[@id='footer']/div/table/tbody/tr[position()>1]",
-    #    'position': {'ip': './td[1]', 'port': './td[2]', 'type': './td[4]', 'protocol': ''}
-    #},
+    {
+        'name':'66免费代理网',
+        'urls': ['http://www.66ip.cn/%s.html' % n for n in ['index'] + list(range(2, 3))],
+        'type': 'xpath',
+        'pattern': ".//*[@id='main']/div/div[1]/table/tr[position()>1]",
+        'position': {'ip': './td[1]', 'port': './td[2]', 'type': './td[4]','protocol':'',},
+        'protocol': '',
+        'cookie':'secret_cookie'
+    },
+    {
+        'name':'66免费代理网',
+        'urls': ['http://www.66ip.cn/areaindex_%s/%s.html' % (m, n) for m in
+        range(1, 35) for n in range(1, 3)],
+        'type': 'xpath',
+        'pattern': ".//*[@id='footer']/div/table/tr[position()>1]",
+        'position': {'ip': './td[1]', 'port': './td[2]', 'type': './td[4]','protocol':'',},
+        'protocol': '',
+        'cookie':'secret_cookie'
+    },
     {
         'name':'快代理',
         'urls': ['https://www.kuaidaili.com/ops/proxylist/%s/' % n for n in range(1, 10)],
@@ -92,8 +97,8 @@ BASE_DIR = os.path.abspath(os.path.dirname(__file__))
 DATABASE_CONFIG = {
     'ip':'123.206.57.126',
     'port':3306,
-    'username':'A',
-    'password':'A',
+    'username':'root',
+    'password':'AAA',
     'database':'ProxyPool',
     }
 #纯真IP数据文件位置
@@ -102,15 +107,15 @@ QQWRY_PATH = os.path.join(BASE_DIR, 'data/qqwry.dat')
 #数据库中最低代理数量 低于这个数量会执行任务开始采集
 DB_PROXY_MINIMUM = 2000
 #抓取间隔 每隔时间会检测是否需要进行采集任务 *单位分钟
-CRAWL_INTERVAL = 20
+CRAWL_INTERVAL = 60
 #检查数据库中数据有效性及更新数据线程数
 CHECK_DB_TASK = 30
 #同时进行几个网站的采集任务
 CRAWL_TASK = 2
-#每个网站抓取URL任务数
-CRAWL_URL_TASK = 3
 #每个子进程去验证并保存多少条代理数据 因为其中涉及验证代理和数据库插入
-PROCESS_CHECK_SAVE_PROXY = 50
+PROCESS_CHECK_SAVE_PROXY = 30
+#上面这个最多允许有几个子进程 一个子进程大概占用30MB内存
+PROCESS_CHECK_MAX = 8
 #连接超时
 TIMEOUT = 8
 #爬虫抓取网页数据重试次数
@@ -157,7 +162,8 @@ USER_AGENTS = ["Mozilla/4.0 (compatible; MSIE 6.0; Windows NT 5.1; SV1; AcooBrow
     "Mozilla/5.0 (Windows NT 6.1; Win64; x64; rv:2.0b13pre) Gecko/20110307 Firefox/4.0b13pre",
     "Mozilla/5.0 (X11; Ubuntu; Linux x86_64; rv:16.0) Gecko/20100101 Firefox/16.0",
     "Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.11 (KHTML, like Gecko) Chrome/23.0.1271.64 Safari/537.11",
-    "Mozilla/5.0 (X11; U; Linux x86_64; zh-CN; rv:1.9.2.10) Gecko/20100922 Ubuntu/10.10 (maverick) Firefox/3.6.10"]
+    "Mozilla/5.0 (X11; U; Linux x86_64; zh-CN; rv:1.9.2.10) Gecko/20100922 Ubuntu/10.10 (maverick) Firefox/3.6.10",
+    "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/63.0.3239.108 Safari/537.36"]
 
 #HTTP头
 HttpHeader = {

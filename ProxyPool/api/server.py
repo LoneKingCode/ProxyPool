@@ -123,9 +123,9 @@ def get_pagedata():
     for row in result:
         for key,value in row.items():
             if key == 'type':
-                result[count][key] = ProxyType(int(value)).value
+                result[count][key] = ProxyType(int(value)).name
             elif key == 'protocol':
-                result[count][key] = ProxyProtocol(int(value)).value
+                result[count][key] = ProxyProtocol(int(value)).name
         count = count + 1
     json_result = json.dumps(DataTableModel(draw,totalcount,totalcount,result).tojson())
     return json_result

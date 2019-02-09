@@ -55,26 +55,32 @@ def check_proxy_from_db(proxy,db_valid,db_invalid):
         sys.stdout.flush()
 def allocate_check_task(proxy_queue,proxy_waitsave_queue,valid_proxy,invalid_proxy):
     taskprocess = Queue()
+    p_check_count = 0
     while True:
         if not taskprocess.empty():
             try:
                 pid = taskprocess.get()
                 ps = psutil.Process(pid)
                 ps.kill()
-                ps.wait()
+                p_check_count = p_check_count - 1
                 #print('杀死子进程:' + str(pid))
             except Exception as e:
                 pass
         tasklist = []
+        wait_time = 0
         while not proxy_queue.empty():
             tasklist.append(proxy_queue.get())
+            if not (len(tasklist) >= config.PROCESS_CHECK_SAVE_PROXY):
+                wait_time = wait_time + 1
             #每个进程去验证并保存多少条代理
-            while(len(tasklist) >= config.PROCESS_CHECK_SAVE_PROXY):
+            while((len(tasklist) >= config.PROCESS_CHECK_SAVE_PROXY) or wait_time > 3) and p_check_count < config. PROCESS_CHECK_MAX:
                 #print('分配检查代理并放入待存储队列任务......')
                 p_check_proxy = Process(target=start_check_proxy_wait_save,args=(tasklist,proxy_waitsave_queue,taskprocess,valid_proxy,invalid_proxy))
                 p_check_proxy.start()
+                p_check_count = p_check_count + 1
                 tasklist.clear()
-
+                wait_time = 0
+        time.sleep(15)
 def start_check_proxy_wait_save(tasklist,proxy_waitsave_queue,taskprocess,valid_proxy,invalid_proxy):
         #print('分配任务完成，开始执行任务......')
         checklist = []

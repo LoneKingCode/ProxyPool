@@ -1,5 +1,5 @@
-网页展示，查询
- 利用API接口
+chrome webdriver selenium
+
 type：解析方式,取值 regular(正则表达式),xpath(xpath解析),module(自定义第三方模块解析)
 
 一些地方加try catch
@@ -13,7 +13,7 @@ http://www.ip3366.net/free/
 http://www.freeproxylists.net/zh/?u=50&page=2
 
 
-pip3 install gevent greenlet lxml IPy openpyxl requests pymysql flask selenium
+pip3 install gevent greenlet lxml IPy openpyxl requests pymysql flask selenium PyExecJS
 
 PYTHONIOENCODING=utf-8 python3 start.py
 

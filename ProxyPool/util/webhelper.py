@@ -11,6 +11,8 @@ import config
 import json
 import time
 import os
+import re
+import execjs
 class WebHelper(object):
     @staticmethod
     def get_cookie(url):
@@ -24,15 +26,43 @@ class WebHelper(object):
         driver.quit()
         return cookie
 
+    def executejs(html):
+        # 提取其中的JS加密函数
+        js_string = ''.join(re.findall(r'(function .*?)</script>',html))
+
+        # 提取其中执行JS函数的参数
+        js_func_arg = re.findall(r'setTimeout\(\"\D+\((\d+)\)\"', html)[0]
+        js_func_name = re.findall(r'function (\w+)',js_string)[0]
+
+        # 修改JS函数，使其返回Cookie内容
+        js_string = js_string.replace('eval("qo=eval;qo(po);")', 'return po')
+
+        func = execjs.compile(js_string)
+        return func.call(js_func_name,js_func_arg)
+
+    def parse_cookie(string):
+        string = string.replace("document.cookie='", "")
+        clearance = string.split(';')[0]
+        return clearance
+
     @staticmethod
-    def get_html(url,setcookie = False):
+    def get_html(url,secret_cookie = False,set_cookie = False):
+        headers = HttpHeader
         retry_time = 0
+        cookies = None
         while retry_time < RETRY_TIME:
             try:
-                headers = HttpHeader
-                if setcookie:
+                #这种加密第一次会返回JS代码 用于生成新的COOKIE
+                if secret_cookie:
+                    r = requests.get(url,headers=headers,timeout=TIMEOUT)
+                    r.encoding = chardet.detect(r.content)['encoding']
+                    secret_js = r.text
+                    cookie_str = WebHelper.executejs(secret_js)
+                    cookie = WebHelper.parse_cookie(cookie_str)
+                    headers['Cookie'] = cookie
+                elif set_cookie:
                     headers['Cookie'] = WebHelper.get_cookie(url)
-                r = requests.get(url,headers=headers,timeout=TIMEOUT )
+                r = requests.get(url,headers=headers,timeout=TIMEOUT)
                 r.encoding = chardet.detect(r.content)['encoding']
                 if (not r.ok) or len(r.content) < 500:
                     raise ConnectionError
@@ -133,5 +163,5 @@ class WebHelper(object):
         return content['origin']
 
 if __name__ == '__main__':
-    a = WebHelper.proxy_valid('39.135.9.103','8080')
+    a = WebHelper.get_html('http://www.66ip.cn/areaindex_20/1.html',True)
     b = 1

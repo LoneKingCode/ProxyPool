@@ -10,7 +10,7 @@ class Parser(object):
     @staticmethod
     #分析获取代理数据
     def get_proxy_data(url,urldata):
-        type=urldata['type']
+        type = urldata['type']
         try:
             proxylist = []
             if type == 'xpath':
@@ -23,14 +23,15 @@ class Parser(object):
                 print('网址配置错误，请填写正确的type')
                 LogHelper.error('网址配置错误，请填写正确的type,url:' + url)
             return proxylist
-        except :
-            LogHelper.error('转换失败,URL:' + url)
+        except Exception as e:
+            LogHelper.error('转换失败,URL:' + url + ' 错误信息:' + str(e))
             return proxylist
 
     @staticmethod
     def xpath_parser(url,urldata):
         type = urldata['type']
-        html = WebHelper.get_html(url)
+        is_secret_cookie = 'cookie' in urldata.keys() and urldata['cookie'] == 'secret_cookie'
+        html = WebHelper.get_html(url,is_secret_cookie)
         proxylist = []
         if not html:
             return proxylist
@@ -56,7 +57,7 @@ class Parser(object):
 
     @staticmethod
     def regular_parser(url,urldata):
-        proxylist=[]
+        proxylist = []
         return proxylist
 
     @staticmethod
@@ -82,14 +83,14 @@ class ParserExtension(object):
         ipAndPort_xpath = './td[1]'
         type_xpath = './td[2]'
         protocol_xpath = './td[3]'
-        proxylist=[]
+        proxylist = []
         for data in proxy_data:
             ip = ''
             port = 0
-            type=data.xpath('./td[2]/a/text()')[0]
-            protocol=data.xpath('./td[3]/a/text()')[0]
+            type = data.xpath('./td[2]/a/text()')[0]
+            protocol = data.xpath('./td[3]/a/text()')[0]
 
-            ip_port_data= data.xpath(ipAndPort_xpath)[0]
+            ip_port_data = data.xpath(ipAndPort_xpath)[0]
             for e in ip_port_data:
                 e_style = e.attrib['style'] if 'style' in e.attrib.keys() else ''
                 e_class = e.attrib['class'] if 'class' in e.attrib.keys() else ''
