@@ -1,7 +1,7 @@
 from db.sqlhelper import SqlHelper
 import time
+import datetime
 sqlhelper = SqlHelper()
-sqlhelper.create_db()
 
 #保存代理数据到数据库中
 def data_store(proxy_waitsave_queue):

@@ -4,8 +4,6 @@ import random
 #项目路径
 BASE_DIR = os.path.abspath(os.path.dirname(__file__))
 
-#ChromeDriver位置
-CHROME_DRIVER_PATH = os.path.join(BASE_DIR,'plugin/chromedriver.exe')
 
 #API服务器IP
 API_SERVER_IP = '0.0.0.0'
@@ -16,7 +14,13 @@ API_SERVER_PORT = 8000
 #xpath，regular：正则表达式，custom：自定义方法，在crawler.parser.ParserExtension中定义
 #cookie参数 secret_cookie (有些网站通过第一次访问时返回JS代码来生成新的cookie 之后都需要带上这个cookie访问
 #不然就返回521错误)
-UrlList = [
+UrlList = [{
+        'name':'云代理',
+        'urls':['http://www.ip3366.net/free/?stype=%s&page=%s' % (t,p) for t in range(1,5) for p in range(1,8)],
+        'type':'xpath',
+        'pattern':'//*[@id="list"]/table/tbody/tr[position()>1]',
+        'position':{'ip':'./td[1]','port':'./td[2]','type':'','protocol':'',},
+    },
     {
         'name':'开心代理',
         'urls':['http://ip.kxdaili.com/dailiip/%s/%s.html#ip' % (t,i) for t in
@@ -27,7 +31,7 @@ UrlList = [
     },
    {
         'name':'89免费代理',
-        'urls':['http://www.89ip.cn/index_%s.html' % i for i in range(1,2)],
+        'urls':['http://www.89ip.cn/index_%s.html' % i for i in range(1,50)],
         'type':'xpath',
         'pattern':'//table[@class="layui-table"]//tr[position()>1]',
         'position':{'ip':'./td[1]','port':'./td[2]','type':'','protocol':'',},

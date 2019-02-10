@@ -5,6 +5,7 @@ import requests
 from util.webhelper import WebHelper
 from util.loghelper import LogHelper
 from config import UrlList
+import config
 #转换器
 class Parser(object):
     @staticmethod
@@ -69,15 +70,15 @@ class Parser(object):
             parser_ext = getattr(parser,'ParserExtension')
             func = getattr(parser_ext,modulename)
             proxylist = func(urldata)
-        except :
-            LogHelper.error('未找到指定的转换模块:%s 或转换出错' % modulename)
+        except Exception as e:
+            LogHelper.error('未找到指定的转换模块:%s 或转换出错:%s' % (modulename,str(e)))
         return proxylist
 
 
 
 class ParserExtension(object):
     def goubanjia(urldata):
-        html = WebHelper.get_html('http://www.goubanjia.com/')
+        html = WebHelper.get_html(urldata['urls'][0])
         html = etree.HTML(html)
         proxy_data = html.xpath('//table/tbody/tr[position()>=1]')
         ipAndPort_xpath = './td[1]'
@@ -116,4 +117,4 @@ class ParserExtension(object):
         return proxylist
 
 if __name__ == '__main__':
-    a = Parser.get_proxy_data('http://www.xicidaili.com/nn/2',UrlList[6])
+    a = Parser.get_proxy_data('http://www.ip3366.net/free/?stype=1&page=1',UrlList[0])

@@ -120,7 +120,7 @@ def check_proxy_wait_save(proxy,proxy_waitsave_queue,valid_proxy,invalid_proxy):
         else:
             country = '国外'
             area = ipaddr
-        model = {'ip':ip,'port':port,'speed':speed,'type':type,'protocol':protocol,'country':country,'area':area,'score':10}
+        model = {'ip':ip,'port':port,'speed':speed,'type':type,'protocol':protocol,'country':country,'area':area,'score':10,'checkdatetime':str(datetime.now())}
         #等待放入到代存储队列中
         proxy_waitsave_queue.put(model)
     else:

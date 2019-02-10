@@ -5,7 +5,7 @@ import random
 from config import HttpHeader,TIMEOUT,RETRY_TIME
 from util.loghelper import LogHelper
 from db.datastore import sqlhelper
-from selenium import webdriver
+#from selenium import webdriver
 import chardet
 import config
 import json
@@ -13,18 +13,20 @@ import time
 import os
 import re
 import execjs
+
+#CHROME_DRIVER_PATH = os.path.join(config.BASE_DIR,'plugin/chromedriver.exe')
 class WebHelper(object):
-    @staticmethod
-    def get_cookie(url):
-        driver = webdriver.Chrome(executable_path = config.CHROME_DRIVER_PATH)
-        driver.get(url)
-        time.sleep(3)
-        cj = driver.get_cookies()
-        cookie = ''
-        for c in cj:
-            cookie += c['name'] + '=' + c['value'] + ';'
-        driver.quit()
-        return cookie
+    #@staticmethod
+    #def get_cookie(url):
+    #    driver = webdriver.Chrome(executable_path = config.CHROME_DRIVER_PATH)
+    #    driver.get(url)
+    #    time.sleep(3)
+    #    cj = driver.get_cookies()
+    #    cookie = ''
+    #    for c in cj:
+    #        cookie += c['name'] + '=' + c['value'] + ';'
+    #    driver.quit()
+    #    return cookie
 
     def executejs(html):
         # 提取其中的JS加密函数
@@ -46,7 +48,7 @@ class WebHelper(object):
         return clearance
 
     @staticmethod
-    def get_html(url,secret_cookie = False,set_cookie = False):
+    def get_html(url,secret_cookie = False):
         headers = HttpHeader
         retry_time = 0
         cookies = None
@@ -62,8 +64,6 @@ class WebHelper(object):
                     cookie_str = WebHelper.executejs(secret_js)
                     cookie = WebHelper.parse_cookie(cookie_str)
                     headers['Cookie'] = cookie
-                elif set_cookie:
-                    headers['Cookie'] = WebHelper.get_cookie(url)
                 r = requests.get(url,headers=headers,timeout=TIMEOUT)
                 r.encoding = chardet.detect(r.content)['encoding']
                 if (not r.ok) or len(r.content) < 500:

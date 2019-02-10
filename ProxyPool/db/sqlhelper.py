@@ -1,5 +1,4 @@
 # coding:utf-8
-
 import datetime
 import os
 from enum import IntEnum
@@ -20,7 +19,8 @@ class ProxyProtocol(IntEnum):
 allow_columns = ['ip','port','type','protocol','country','area','score','speed']
 
 
-#数据库中列 id ip port speed type protocol  country area score    checkdatetime
+
+#数据库中列 id ip port speed type protocol country area score checkdatetime
 
 #def singleton(cls):
 #    instances = {}
@@ -57,8 +57,28 @@ class SqlHelper(object):
                 LogHelper.error('获取数据库连接出错:' + str(e))
 
     def create_db(self):
-        #BaseModel.metadata.create_all(engine)
-        pass
+        cmd = "  DROP TABLE IF EXISTS `Proxy_MainA`;"
+        cmd1 = "CREATE TABLE `Proxy_MainA` (                    \
+  `id` int(11) NOT NULL,                     \
+  `ip` varchar(255) DEFAULT NULL,                \
+  `port` varchar(255) DEFAULT NULL,           \
+  `speed` varchar(255) DEFAULT NULL,          \
+  `type` varchar(255) DEFAULT NULL,            \
+  `protocol` varchar(255) DEFAULT NULL,       \
+  `country` varchar(255) DEFAULT NULL,       \
+  `area` varchar(255) DEFAULT NULL,           \
+  `score` int(255) DEFAULT NULL,               \
+  `checkdatetime` varchar(255) DEFAULT NULL       \
+) ENGINE=MyISAM DEFAULT CHARSET=utf8mb4;  "
+        cmd2 = " ALTER TABLE `Proxy_MainA`  \
+  ADD PRIMARY KEY (`id`);   "
+        cmd3 = "  ALTER TABLE `Proxy_MainA`    \
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=1;"
+        self.execute(cmd)
+        self.execute(cmd1)
+        self.execute(cmd2)
+        self.execute(cmd3)
+
 
     def drop_db(self):
         #BaseModel.metadata.drop_all(engine)
@@ -81,8 +101,8 @@ class SqlHelper(object):
                 LogHelper.error('执行{0}出错,错误原因:{1}'.format(sqls,str(e)))
             finally:
                 self.__close(cursor, conn)
-        except :
-            LogHelper.error('获取数据库连接出错,语句{0},错误原因:{1}'.format(','.join(sqls)))
+        except Exception as e:
+            LogHelper.error('获取数据库连接出错,语句{0},错误原因:{1}'.format(','.join(sqls),str(e)))
         return effect_row
 
     #去重复
@@ -96,7 +116,7 @@ class SqlHelper(object):
 	        AND Proxy_Main.`port` = t2.`port`  \
 	        AND Proxy_Main.id > t2.id;')
 
-    def query(self,sql,count=0):
+    def query(self,sql,count = 0):
         conn = self.__get_conn()
         cursor = conn.cursor(cursor=pymysql.cursors.DictCursor)
         result = None
@@ -133,7 +153,7 @@ class SqlHelper(object):
             effect_row = self.execute_many(sqllist)
         return effect_row
 
-    def get(self,conditions=None,count=0):
+    def get(self,conditions = None,count = 0):
         where = '1=1'
         if conditions and isinstance(conditions,dict):
             where = ''
@@ -174,10 +194,11 @@ class SqlHelper(object):
 
 if __name__ == '__main__':
     sql = SqlHelper()
-
+    sql.create_db()
+    print('创建数据库表结构完成，请前往mysql内检查是否成功创建')
+     #a =
     #a =
-    #a =
-    sql.add([{'ip':'1.1.1.1','port':'2222','speed':0,'type':0,'protocol':0,'country':'asd','area':'fff','score':'10'}])
+    #sql.add([{'ip':'1.1.1.1','port':'2222','speed':0,'type':0,'protocol':0,'country':'asd','area':'fff','score':'10'}])
     #a =
     #sql.add([{'ip':'1.1.1.4','port':'2222','speed':'0','type':'0','protocol':'0','country':'asd','area':'fff','score':'10'},
     #         {'ip':'1.1.1.2','port':'2222','speed':'0','type':'0','protocol':'0','country':'asd','area':'fff','score':'10'},
@@ -185,6 +206,6 @@ if __name__ == '__main__':
     #a = sql.query('select * from Proxy_Main',5)
     #a = sql.update({'score':'333','port':'666'}, {'country':'f','speed':'2'})
     #a = sql.delete({'country':'f','speed':'2'})
-    a = sql.get({'country':'b','area':'b','asdasd':'asda'},5)
+    #a = sql.get({'country':'b','area':'b','asdasd':'asda'},5)
     #a = sql.get()
-    print(a)
+    #print(a)
