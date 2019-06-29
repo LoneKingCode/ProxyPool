@@ -34,7 +34,7 @@ class MysqlHelper(object):
                 LogHelper.error('获取数据库连接出错:' + str(e))
 
     def create_db(self):
-        #BaseModel.metadata.create_all(engine)
+       #
         pass
 
     def drop_db(self):

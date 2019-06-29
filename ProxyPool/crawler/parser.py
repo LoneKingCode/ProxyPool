@@ -117,4 +117,4 @@ class ParserExtension(object):
         return proxylist
 
 if __name__ == '__main__':
-    a = Parser.get_proxy_data('http://www.ip3366.net/free/?stype=1&page=1',UrlList[0])
+    a = Parser.get_proxy_data('http://www.freeproxylists.net/zh/?u=70&page=1',UrlList[0])

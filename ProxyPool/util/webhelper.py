@@ -78,8 +78,8 @@ class WebHelper(object):
                     continue
                 try:
                     proxy = random.choice(proxies)
-                    ip ='119.76.129.179' # proxy['ip']
-                    port ='8080' # proxy['port']
+                    ip = proxy['ip']
+                    port = proxy['port']
                     proxies = {"http": "http://%s:%s" % (ip, port), "https":"https://%s:%s" % (ip, port)}
                     r = requests.get(url=url, headers=headers,timeout=TIMEOUT, proxies=proxies)
                     r.encoding = chardet.detect(r.content)['encoding']

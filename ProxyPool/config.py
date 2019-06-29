@@ -14,7 +14,8 @@ API_SERVER_PORT = 8000
 #xpath，regular：正则表达式，custom：自定义方法，在crawler.parser.ParserExtension中定义
 #cookie参数 secret_cookie (有些网站通过第一次访问时返回JS代码来生成新的cookie 之后都需要带上这个cookie访问
 #不然就返回521错误)
-UrlList = [{
+UrlList = [
+    {
         'name':'云代理',
         'urls':['http://www.ip3366.net/free/?stype=%s&page=%s' % (t,p) for t in range(1,5) for p in range(1,8)],
         'type':'xpath',
@@ -100,12 +101,12 @@ BASE_DIR = os.path.abspath(os.path.dirname(__file__))
 #DATABASE_PATH = os.path.join(BASE_DIR, 'data/proxy.db')
 #数据库连接配置
 DATABASE_CONFIG = {
-    'ip':'123.206.57.126',
+    'ip':'ks.lk1.cc',
     'port':3306,
     'username':'root',
-    'password':'AAA',
+    'password':'asd',
     'database':'ProxyPool',
-    }
+}
 #纯真IP数据文件位置
 QQWRY_PATH = os.path.join(BASE_DIR, 'data/qqwry.dat')
 

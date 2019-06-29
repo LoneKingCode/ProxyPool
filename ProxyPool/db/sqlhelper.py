@@ -57,8 +57,8 @@ class SqlHelper(object):
                 LogHelper.error('获取数据库连接出错:' + str(e))
 
     def create_db(self):
-        cmd = "  DROP TABLE IF EXISTS `Proxy_MainA`;"
-        cmd1 = "CREATE TABLE `Proxy_MainA` (                    \
+        cmd = "  DROP TABLE IF EXISTS `Proxy_Main`;"
+        cmd1 = "CREATE TABLE `Proxy_Main` (                    \
   `id` int(11) NOT NULL,                     \
   `ip` varchar(255) DEFAULT NULL,                \
   `port` varchar(255) DEFAULT NULL,           \
@@ -70,9 +70,9 @@ class SqlHelper(object):
   `score` int(255) DEFAULT NULL,               \
   `checkdatetime` varchar(255) DEFAULT NULL       \
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8mb4;  "
-        cmd2 = " ALTER TABLE `Proxy_MainA`  \
+        cmd2 = " ALTER TABLE `Proxy_Main`  \
   ADD PRIMARY KEY (`id`);   "
-        cmd3 = "  ALTER TABLE `Proxy_MainA`    \
+        cmd3 = "  ALTER TABLE `Proxy_Main`    \
   MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=1;"
         self.execute(cmd)
         self.execute(cmd1)
@@ -164,9 +164,9 @@ class SqlHelper(object):
             if where == '':
                 where = '1=1'
         if count == 0 or not count:
-            result = self.query('select * from Proxy_Main where ' + where,count)
-        else:
             result = self.query('select * from Proxy_Main where ' + where)
+        else:
+            result = self.query('select * from Proxy_Main where ' + where,count)
         return result
 
     def update(self,model,conditions):
