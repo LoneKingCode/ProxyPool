@@ -26,7 +26,7 @@ def index():
     return render_template('index.html')
 
 
-@app.route('/upload', methods=['POST', 'GET'])
+@app.route('/upload', methods=['POST'])
 def upload():
      if request.method == 'POST':
         #f = request.files['proxyfile']
@@ -48,7 +48,7 @@ def upload():
             return json.dumps({'msg':'操作失败，内容不存在'})
      return render_template('upload.html')
 
-@app.route('/importdata', methods=['POST', 'GET'])
+@app.route('/importdata', methods=['POST'])
 def importdata():
         proxies = json.loads(request.data.decode('utf-8'))
         proxies = json.loads(proxies)
