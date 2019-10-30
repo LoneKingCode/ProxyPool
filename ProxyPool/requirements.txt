@@ -64,7 +64,7 @@ setuptools==28.8.0
 six==1.11.0
 SQLAlchemy==1.2.10
 Twisted==18.7.0
-urllib3==1.22
+urllib3==1.24.2
 w3lib==1.19.0
 Werkzeug==0.14.1
 whichcraft==0.4.1
