@@ -162,6 +162,7 @@
     <Content Include="api\templates\index.html" />
     <Content Include="api\templates\upload.html" />
     <Content Include="data\qqwry.dat" />
+    <Content Include="db\Proxy_Main.sql" />
     <Content Include="plugin\chromedriver.exe" />
     <Content Include="record.txt" />
     <Content Include="requirements.txt" />
