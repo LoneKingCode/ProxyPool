@@ -41,7 +41,7 @@ netaddr==0.7.19
 openpyxl==2.5.4
 parsel==1.5.0
 poyo==0.4.1
-psutil==5.4.6
+psutil==5.6.6
 pyasn1==0.4.4
 pyasn1-modules==0.2.2
 pycparser==2.18
