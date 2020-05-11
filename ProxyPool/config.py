@@ -115,13 +115,9 @@ DB_PROXY_MINIMUM = 2000
 #抓取间隔 每隔时间会检测是否需要进行采集任务 *单位分钟
 CRAWL_INTERVAL = 60
 #检查数据库中数据有效性及更新数据线程数
-CHECK_DB_TASK = 30
+CHECK_DB_TASK = 50
 #同时进行几个网站的采集任务
 CRAWL_TASK = 2
-#每个子进程去验证并保存多少条代理数据 因为其中涉及验证代理和数据库插入
-PROCESS_CHECK_SAVE_PROXY = 30
-#上面这个最多允许有几个子进程 一个子进程大概占用30MB内存
-PROCESS_CHECK_MAX = 8
 #连接超时
 TIMEOUT = 8
 #爬虫抓取网页数据重试次数

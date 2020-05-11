@@ -101,14 +101,12 @@ class ProxyCrawler(object):
         print('>>>开始分析 %s 数据,共 %d 条网址' % (name,len(urls)))
         proxy_count = 0
         proxy_list = []
-
         for url in urls:
             url_proxy_data = Parser.get_proxy_data(url,urldata)
             proxy_list = proxy_list + url_proxy_data
             time.sleep(1.5)             #酌情修改 有的网站限制的死
-
         proxy_count = len(proxy_list)
-
+     
         success_count = exist_count = 0
         for proxy in proxy_list:
             proxy_str = '%s:%s' % (proxy['ip'],proxy['port'])

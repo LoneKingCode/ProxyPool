@@ -4,7 +4,7 @@
     <SchemaVersion>2.0</SchemaVersion>
     <ProjectGuid>16d4768f-e4f7-4af2-ad2c-1a8d6a5b7ccb</ProjectGuid>
     <ProjectHome>.</ProjectHome>
-    <StartupFile>db\sqlhelper.py</StartupFile>
+    <StartupFile>start.py</StartupFile>
     <SearchPath>
     </SearchPath>
     <WorkingDirectory>.</WorkingDirectory>
