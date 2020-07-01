@@ -1,14 +1,17 @@
+import queue
 import sqlite3
-import queue, os
 
 
 def singleton(cls):
     instances = {}
+
     def _singleton(*args, **kw):
         if cls not in instances:
             instances[cls] = cls(*args, **kw)
         return instances[cls]
+
     return _singleton
+
 
 @singleton
 class SqliteHelper(object):
@@ -27,7 +30,7 @@ class SqliteHelper(object):
         if cursor is not None:
             cursor.close()
         if conn is not None:
-            conn.close # cursor.close()
+            conn.close  # cursor.close()
         self.__create_conn()
 
     def query(self, sql, params):
@@ -45,6 +48,7 @@ class SqliteHelper(object):
         finally:
             self.__close(cursor, conn)
             return value
+
     def execute(self, sql):
         conn = self.__queue_conn.get()
         cursor = conn.cursor()
@@ -81,33 +85,32 @@ class SqliteHelper(object):
         return count
 
 
+# example:
 
-#example:
+# one = SQLiteUtil('xxx.sqlite')
 
-#one = SQLiteUtil('xxx.sqlite')
-
-#rst = one.execute_query('select * from website', None)
-#for line in rst:
-#print(line.get('id'), line.get('url'), line.get('content'))
-
-
-#print(one.execute_update('update website set content = \'2222222\' where id = ?', ('1',)))
-#print(one.execute_update('update website set content = \'2222222\' where id = \'1\'', None))
+# rst = one.execute_query('select * from website', None)
+# for line in rst:
+# print(line.get('id'), line.get('url'), line.get('content'))
 
 
-#print('update many')
-#count = one.execute_update_many(
-#[
-#'update website set content = \'一\' where id = \'1\'',
-#'update website set content = \'二\' where id = \'2\'',
-#'update website set content = 1 where id = \'3\''
-#],
-#[None, None, None]
-#)
-#print('count:', count)
+# print(one.execute_update('update website set content = \'2222222\' where id = ?', ('1',)))
+# print(one.execute_update('update website set content = \'2222222\' where id = \'1\'', None))
 
-#去重复
-#('DELETE FROM Proxy_Main \
+
+# print('update many')
+# count = one.execute_update_many(
+# [
+# 'update website set content = \'一\' where id = \'1\'',
+# 'update website set content = \'二\' where id = \'2\'',
+# 'update website set content = 1 where id = \'3\''
+# ],
+# [None, None, None]
+# )
+# print('count:', count)
+
+# 去重复
+# ('DELETE FROM Proxy_Main \
 #    WHERE rowid IN \
 #   (SELECT p.rowid \
 #    FROM Proxy_Main p \
@@ -121,5 +124,5 @@ class SqliteHelper(object):
 
 if __name__ == '__main__':
     one = SqliteHelper(DATABASE_PATH)
-    rst = one.execute_update('update Proxy_Main set score=score+1 where ip=\'36.89.180.87\'',None)
+    rst = one.execute_update('update Proxy_Main set score=score+1 where ip=\'36.89.180.87\'', None)
     print(rst)

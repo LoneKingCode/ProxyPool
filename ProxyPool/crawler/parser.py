@@ -1,25 +1,26 @@
 # encoding: utf-8
 from lxml import etree
-from urllib import request
-import requests
-from util.webhelper import WebHelper
-from util.loghelper import LogHelper
-from config import UrlList
-import config
-#转换器
+import re
+from ProxyPool.config import UrlList
+from ProxyPool.util.loghelper import LogHelper
+from ProxyPool.util.webhelper import WebHelper
+import html
+
+
+# 转换器
 class Parser(object):
     @staticmethod
-    #分析获取代理数据
-    def get_proxy_data(url,urldata):
+    # 分析获取代理数据
+    def get_proxy_data(url, urldata):
         type = urldata['type']
         try:
             proxylist = []
             if type == 'xpath':
-                proxylist = Parser.xpath_parser(url,urldata)
+                proxylist = Parser.xpath_parser(url, urldata)
             elif type == 'regular':
-                proxylist = Parser.regular_parser(url,urldata)
-            elif  type == 'custom':
-                proxylist = Parser.custom_parser(url,urldata)
+                proxylist = Parser.regular_parser(url, urldata)
+            elif type == 'custom':
+                proxylist = Parser.custom_parser(url, urldata)
             else:
                 print('网址配置错误，请填写正确的type')
                 LogHelper.error('网址配置错误，请填写正确的type,url:' + url)
@@ -29,51 +30,55 @@ class Parser(object):
             return proxylist
 
     @staticmethod
-    def xpath_parser(url,urldata):
-        type = urldata['type']
+    def xpath_parser(url, urldata):
         is_secret_cookie = 'cookie' in urldata.keys() and urldata['cookie'] == 'secret_cookie'
-        html = WebHelper.get_html(url,is_secret_cookie)
+        html = WebHelper.get_html(url, is_secret_cookie)
         proxylist = []
         if not html:
             return proxylist
-        html = etree.HTML(html,parser=etree.HTMLParser(encoding='utf-8'))
+        html = etree.HTML(html, parser=etree.HTMLParser(encoding='utf-8'))
         proxy_data = html.xpath(urldata['pattern'])
 
         for proxy in proxy_data:
-                ip = proxy.xpath(urldata['position']['ip'])[0].text.strip()
-                port = proxy.xpath(urldata['position']['port'])[0].text.strip()
-                if urldata['position']['type'] != '':
-                    type = proxy.xpath(urldata['position']['type'])[0].text.strip()
-                else:
-                    type = '高匿'
-                if urldata['position']['protocol'] != '':
-                    protocol = proxy.xpath(urldata['position']['protocol'])[0].text.strip()
-                else:
-                    protocol = 'http'
-                try:
-                    proxylist.append({'ip':ip,'port':int(port),'type':type,'protocol':protocol})
-                except :
-                    continue
+            ip = proxy.xpath(urldata['position']['ip'])[0].text.strip()
+            port = proxy.xpath(urldata['position']['port'])[0].text.strip()
+            if urldata['position']['type'] != '':
+                type = proxy.xpath(urldata['position']['type'])[0].text.strip()
+            else:
+                type = '高匿'
+            if urldata['position']['protocol'] != '':
+                protocol = proxy.xpath(urldata['position']['protocol'])[0].text.strip()
+            else:
+                protocol = 'http'
+            try:
+                proxylist.append({'ip': ip, 'port': int(port), 'type': type, 'protocol': protocol})
+            except:
+                continue
         return proxylist
 
     @staticmethod
-    def regular_parser(url,urldata):
+    def regular_parser(url, urldata):
+        content = WebHelper.get_html(url)
         proxylist = []
+        if not content:
+            return proxylist
+        pattern = re.compile(urldata['pattern'], re.S)
+        content = html.escape(content)
+        m = pattern.match(content)
         return proxylist
 
     @staticmethod
-    def custom_parser(url,urldata):
+    def custom_parser(url, urldata):
         proxylist = []
         try:
             modulename = urldata['methodname']
-            parser = __import__('crawler.parser',fromlist=('ParserExtension',))
-            parser_ext = getattr(parser,'ParserExtension')
-            func = getattr(parser_ext,modulename)
+            parser = __import__('crawler.parser', fromlist=('ParserExtension',))
+            parser_ext = getattr(parser, 'ParserExtension')
+            func = getattr(parser_ext, modulename)
             proxylist = func(urldata)
         except Exception as e:
-            LogHelper.error('未找到指定的转换模块:%s 或转换出错:%s' % (modulename,str(e)))
+            LogHelper.error('未找到指定的转换模块:%s 或转换出错:%s' % (modulename, str(e)))
         return proxylist
-
 
 
 class ParserExtension(object):
@@ -97,24 +102,24 @@ class ParserExtension(object):
                 e_class = e.attrib['class'] if 'class' in e.attrib.keys() else ''
 
                 if 'port' in e_class:
-                        if e.text:
-                            b = e_class.split(' ')[1]
-                            c = []
-                            for x in b:
-                                c.append(x)
-                            d = len(c)
-                            f = []
-                            for g in range(0,d):
-                                f.append(str('ABCDEFGHIZ'.index(c[g])))
-                            port = int(''.join(f)) >> 0x3
+                    if e.text:
+                        b = e_class.split(' ')[1]
+                        c = []
+                        for x in b:
+                            c.append(x)
+                        d = len(c)
+                        f = []
+                        for g in range(0, d):
+                            f.append(str('ABCDEFGHIZ'.index(c[g])))
+                        port = int(''.join(f)) >> 0x3
                 elif 'none' not in e_style or e_style == '':
                     if e.text:
-                        ip+=e.text
+                        ip += e.text
 
-
-            proxylist.append({'ip':ip,'port':int(port),'type':type,'protocol':protocol})
+            proxylist.append({'ip': ip, 'port': int(port), 'type': type, 'protocol': protocol})
 
         return proxylist
 
+
 if __name__ == '__main__':
-    a = Parser.get_proxy_data('http://www.freeproxylists.net/zh/?u=70&page=1',UrlList[0])
+    a = Parser.get_proxy_data('http://www.89ip.cn/tqdl.html?api=1&num=9999&port=&address=&isp=', UrlList[2])

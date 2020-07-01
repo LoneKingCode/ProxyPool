@@ -1,15 +1,18 @@
 # -*- coding: utf-8 -*-
 import socket
 import struct
-import config
+
+from ProxyPool import config
+
 
 class IpLocater:
-    #国内地区
-    CHINA_AREA = ['省','中国','河北', '山东', '辽宁', '黑龙江', '吉林'
-    , '甘肃', '青海', '河南', '江苏', '湖北', '湖南',
-              '江西', '浙江', '广东', '云南', '福建',
-              '台湾', '海南', '山西', '四川', '陕西',
-              '贵州', '安徽', '重庆', '北京', '上海', '天津', '广西', '内蒙', '西藏', '新疆', '宁夏', '香港', '澳门']
+    # 国内地区
+    CHINA_AREA = ['省', '中国', '河北', '山东', '辽宁', '黑龙江', '吉林',
+                  '甘肃', '青海', '河南', '江苏', '湖北', '湖南',
+                  '江西', '浙江', '广东', '云南', '福建',
+                  '台湾', '海南', '山西', '四川', '陕西',
+                  '贵州', '安徽', '重庆', '北京', '上海', '天津', '广西', '内蒙', '西藏', '新疆', '宁夏', '香港', '澳门']
+
     def __init__(self):
         self.ipdb = open(config.QQWRY_PATH, "rb")
         str = self.ipdb.read(8)
@@ -21,11 +24,12 @@ class IpLocater:
         s = self.getIpAddr(0xffffff00)
         return s
 
-    def isDomestic(self,addr):
+    def isDomestic(self, addr):
         for area in self.CHINA_AREA:
-            if(area in addr):
+            if (area in addr):
                 return True
         return False
+
     def getAreaAddr(self, offset=0):
         if offset:
             self.ipdb.seek(offset)
@@ -109,7 +113,7 @@ class IpLocater:
             address = self.getAddr(self.curEndIpOffset)
             # 把GBK转为utf-8
             # 地址中,替换为_
-            address = str(address).replace(',','_')
+            address = str(address).replace(',', '_')
         else:
             address = str("未找到该IP的地址")
         return address

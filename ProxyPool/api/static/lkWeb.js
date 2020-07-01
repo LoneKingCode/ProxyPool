@@ -27,8 +27,7 @@ lkWeb.GoAction = function (area, ctrl, action, values, isOpen, title, width, hei
             area: [width, height],
             content: url
         });
-    }
-    else
+    } else
         window.location.href = url;
 }
 
@@ -61,53 +60,52 @@ lkWeb.DeleteMulti = function (area, ids, ctrl, table, value) {
         return;
     }
     parent.layer.confirm("确认删除" + ids.length + "条数据？", {
-        btn: ["确认", "取消"]
-    }, function () {
-        var postUrl = '/' + area + '/' + ctrl + '/delete/';
-        var _value = "";
-        if (IsNotEmpty(value))
-            _value = value;
-        $.ajax(
-            {
-                type: 'post',
-                url: postUrl,
-                data: {
-                    ids: ids,
-                    value: _value,
-                    csrfmiddlewaretoken: lkWeb.GetCsrfToken()
-                },
-                success: function (result) {
-                    if (result.flag == true) {
-                        parent.layer.alert("删除成功")
-                        if (table != null && table != undefined)
-                            table.draw(false);//刷新datatable
-                        else {
-                            window.location.reload();
+            btn: ["确认", "取消"]
+        }, function () {
+            var postUrl = '/' + area + '/' + ctrl + '/delete/';
+            var _value = "";
+            if (IsNotEmpty(value))
+                _value = value;
+            $.ajax(
+                {
+                    type: 'post',
+                    url: postUrl,
+                    data: {
+                        ids: ids,
+                        value: _value,
+                        csrfmiddlewaretoken: lkWeb.GetCsrfToken()
+                    },
+                    success: function (result) {
+                        if (result.flag == true) {
+                            parent.layer.alert("删除成功")
+                            if (table != null && table != undefined)
+                                table.draw(false);//刷新datatable
+                            else {
+                                window.location.reload();
+                            }
+                        } else {
+                            if (IsNotEmpty(result.msg))
+                                parent.layer.alert(result.msg);
+                            else
+                                parent.layer.alert("删除失败");
                         }
+                    },
+                    error: function (err) {
+                        console.log(err);
+                        parent.layer.alert("删除失败");
                     }
-                    else {
-                        if (IsNotEmpty(result.msg))
-                            parent.layer.alert(result.msg);
-                        else
-                            parent.layer.alert("删除失败");
-                    }
-                },
-                error: function (err) {
-                    console.log(err);
-                    parent.layer.alert("删除失败");
-                }
-            })
-    }, function () {
+                })
+        }, function () {
 
-    }
+        }
     )
 }
 
 //删除单个
 lkWeb.Delete = function (area, id, ctrl, table, value) {
     parent.layer.confirm("确认删除？", {
-        btn: ["确认", "取消"]
-    },
+            btn: ["确认", "取消"]
+        },
         function () {
             var postUrl = '/' + area + '/' + ctrl + '/delete';
             var _value = "";
@@ -129,8 +127,7 @@ lkWeb.Delete = function (area, id, ctrl, table, value) {
                                 table.draw(false);//刷新datatable
                             else
                                 window.location.reload();
-                        }
-                        else {
+                        } else {
                             if (IsNotEmpty(result.msg))
                                 parent.layer.alert(result.msg);
                             else
@@ -161,8 +158,7 @@ lkWeb.AjaxPost = function (url, data, successCallBack, errorCallBack) {
                         successCallBack(result);
                     else
                         parent.layer.alert("操作成功");
-                }
-                else {
+                } else {
                     if (IsNotEmpty(result.msg))
                         parent.layer.alert(result.msg);
                     else
@@ -190,8 +186,7 @@ lkWeb.AjaxGet = function (url, data, successCallBack, errorCallBack) {
                         successCallBack(result);
                     else
                         parent.layer.alert("操作成功");
-                }
-                else {
+                } else {
                     if (IsNotEmpty(result.msg))
                         parent.layer.alert(result.msg);
                     else
@@ -222,13 +217,11 @@ lkWeb.FormValidation = function (validationForm, successCallBack, successMsg) {
                             successCallBack(data);
 
                     }, 1200)
-                }
-                else {
+                } else {
                     if (IsFunction(successCallBack))
                         successCallBack(data);
                 }
-            }
-            else {
+            } else {
                 layer.alert(data.msg);
             }
         },
@@ -257,8 +250,8 @@ lkWeb.CloseLoad = function () {
 
 lkWeb.Confirm = function (msg, successCallBack, cancelCallBack) {
     parent.layer.confirm(msg, {
-        btn: ["确认", "取消"]
-    },
+            btn: ["确认", "取消"]
+        },
         function () {
             if (IsFunction(successCallBack))
                 successCallBack();
@@ -299,7 +292,7 @@ lkWeb.LoadTable = function (tableID, colums, dataUrl, value) {
                 }
                 param.searchKey = _searchKey;
                 param.value = _value;
- 
+
                 return param;
             },
 
@@ -386,8 +379,7 @@ String.prototype.format = function (args) {
                     result = result.replace(reg, args[key]);
                 }
             }
-        }
-        else {
+        } else {
             for (var i = 0; i < arguments.length; i++) {
                 if (arguments[i] != undefined) {
                     var reg = new RegExp("({)" + i + "(})", "g");
@@ -406,6 +398,7 @@ function IsEmpty(value) {
 function IsNotEmpty(value) {
     return value != "" && value != null && value != undefined;
 }
+
 function IsFunction(func) {
     return typeof func == "function";
 }
