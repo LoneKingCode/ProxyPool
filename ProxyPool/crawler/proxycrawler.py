@@ -7,7 +7,6 @@ from ProxyPool import config
 BASE_DIR = os.path.abspath(os.path.dirname(__file__))  # 项目路径
 rootPath = os.path.split(BASE_DIR)[0]
 sys.path.append(rootPath)  # 不添加的话 在其他地方执行会提示no module named
-import gevent
 from datetime import datetime
 from multiprocessing import Value
 from concurrent.futures import ThreadPoolExecutor
@@ -59,13 +58,6 @@ class ProxyCrawler(object):
                 db_valid = Value('i', 0)
                 db_invalid = Value('i', 0)
 
-                # checklist = []
-                # for proxy in proxies:
-                #     checklist.append(gevent.spawn(check_proxy_from_db, proxy, db_valid, db_invalid))
-                #     if len(checklist) >= config.CHECK_DB_TASK:
-                #         gevent.joinall(checklist)
-                #         checklist = []
-                # gevent.joinall(checklist)
                 threadPool = ThreadPoolExecutor(max_workers=config.CHECK_DB_TASK,
                                                 thread_name_prefix="valid_proxy_")
                 for proxy in proxies:
@@ -79,18 +71,11 @@ class ProxyCrawler(object):
                     print('>>>数据库中共 %d 条数据,小于设定数量 %d ,开始执行任务' % (proxy_count, config.DB_PROXY_MINIMUM))
                     # 加入抓取网站任务
                     print('>>>开始采集网站数据')
-
-                    crawltask = []
                     threadPool = ThreadPoolExecutor(max_workers=config.CRAWL_TASK,
                                                     thread_name_prefix="crawl_proxy_")
                     for urldata in config.UrlList:
                         threadPool.submit(self.crawl, urldata)
                     threadPool.shutdown(wait=True)
-                    #     crawltask.append(gevent.spawn(self.crawl, urldata))
-                    #     if len(crawltask) >= config.CRAWL_TASK:
-                    #         gevent.joinall(crawltask)
-                    #         crawltask = []
-                    # gevent.joinall(crawltask)
 
                     print('>>>采集网站数据完成\n')
                     self.finish = True

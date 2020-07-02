@@ -12,14 +12,15 @@ class Parser(object):
     @staticmethod
     # 分析获取代理数据
     def get_proxy_data(url, urldata):
-        type = urldata['type']
+        proxy_type = urldata['type']
+        proxylist = []
         try:
-            proxylist = []
-            if type == 'xpath':
+
+            if proxy_type == 'xpath':
                 proxylist = Parser.xpath_parser(url, urldata)
-            elif type == 'regular':
+            elif proxy_type == 'regular':
                 proxylist = Parser.regular_parser(url, urldata)
-            elif type == 'custom':
+            elif proxy_type == 'custom':
                 proxylist = Parser.custom_parser(url, urldata)
             else:
                 print('网址配置错误，请填写正确的type')
@@ -42,16 +43,18 @@ class Parser(object):
         for proxy in proxy_data:
             ip = proxy.xpath(urldata['position']['ip'])[0].text.strip()
             port = proxy.xpath(urldata['position']['port'])[0].text.strip()
+            proxy_type = ''
+            protocol = ''
             if urldata['position']['type'] != '':
-                type = proxy.xpath(urldata['position']['type'])[0].text.strip()
+                proxy_type = proxy.xpath(urldata['position']['type'])[0].text.strip()
             else:
-                type = '高匿'
+                proxy_type = '高匿'
             if urldata['position']['protocol'] != '':
                 protocol = proxy.xpath(urldata['position']['protocol'])[0].text.strip()
             else:
                 protocol = 'http'
             try:
-                proxylist.append({'ip': ip, 'port': int(port), 'type': type, 'protocol': protocol})
+                proxylist.append({'ip': ip, 'port': int(port), 'type': proxy_type, 'protocol': protocol})
             except:
                 continue
         return proxylist
@@ -62,9 +65,24 @@ class Parser(object):
         proxylist = []
         if not content:
             return proxylist
-        pattern = re.compile(urldata['pattern'], re.S)
         content = html.escape(content)
-        m = pattern.match(content)
+        proxy_data = re.findall(urldata['pattern'], content, re.S)
+        ip = ''
+        port = ''
+        proxy_type = ''
+        protocol = ''
+        if urldata['position']['ip'] == '':
+            return
+        if urldata['position']['port'] == '':
+            return
+        for proxy in proxy_data:
+            ip = proxy[int(urldata['position']['ip'])]
+            port = proxy[int(urldata['position']['port'])]
+            if urldata['position']['type'] != '':
+                proxy_type = proxy[int(urldata['position']['type'])]
+            if urldata['position']['protocol'] != '':
+                protocol = proxy[int(urldata['position']['protocol'])]
+            proxylist.append({'ip': ip, 'port': int(port), 'type': proxy_type, 'protocol': protocol})
         return proxylist
 
     @staticmethod

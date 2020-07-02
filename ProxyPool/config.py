@@ -29,13 +29,13 @@ UrlList = [
         'pattern': '//table//tr[position()>1]',
         'position': {'ip': './td[1]', 'port': './td[2]', 'type': './td[3]', 'protocol': './td[4]', }
     },
-    # {
-    #     'name': '89免费代理',
-    #     'urls': ['http://www.89ip.cn/tqdl.html?api=1&num=9999&port=&address=&isp='],
-    #     'type': 'regular',  # 89用正则 http://www.89ip.cn/tqdl.html?api=1&num=9999&port=&address=&isp=
-    #     'pattern': '([0-9]+).([0-9]+).([0-9]+).([0-9]+):([0-9]+)',
-    #     'position': {'ip': 1, 'port': 2, 'type': '', 'protocol': '', },
-    # },
+    {
+        'name': '89免费代理',
+        'urls': ['http://www.89ip.cn/tqdl.html?api=1&num=9999&port=&address=&isp='],
+        'type': 'regular',
+        'pattern': '([0-9]+.[0-9]+.[0-9]+.[0-9]+):([0-9]+)',
+        'position': {'ip': 0, 'port': 1, 'type': '', 'protocol': '', },
+    },
     {
         'name': '66免费代理网',
         'urls': ['http://www.66ip.cn/areaindex_%s/1.html' % n for n in range(1, 35)],  #选取每个地区的第一页数据
