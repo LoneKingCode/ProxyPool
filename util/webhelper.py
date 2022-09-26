@@ -71,7 +71,6 @@ class WebHelper(object):
                     raise ConnectionError('HTTP状态错误或内容过短，status_code:{0},content:{1}'.format(r.status_code, r.text))
                 else:
                     return r.text
-
             except Exception as e:
                 err_msg += str(e) + ' '
                 proxies = sqlhelper.get({'country': '国外'}, 10)

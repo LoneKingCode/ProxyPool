@@ -93,10 +93,8 @@ class SqliteHelper(object):
 # for line in rst:
 # print(line.get('id'), line.get('url'), line.get('content'))
 
-
 # print(one.execute_update('update website set content = \'2222222\' where id = ?', ('1',)))
 # print(one.execute_update('update website set content = \'2222222\' where id = \'1\'', None))
-
 
 # print('update many')
 # count = one.execute_update_many(
