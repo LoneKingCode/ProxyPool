@@ -1,9 +1,9 @@
 # encoding: utf-8
 from lxml import etree
 import re
-from ProxyPool.config import UrlList
-from ProxyPool.util.loghelper import LogHelper
-from ProxyPool.util.webhelper import WebHelper
+from config import UrlList
+from util.loghelper import LogHelper
+from util.WebUtil import WebUtil
 import html
 
 
@@ -33,7 +33,7 @@ class Parser(object):
     @staticmethod
     def xpath_parser(url, urldata):
         is_secret_cookie = 'cookie' in urldata.keys() and urldata['cookie'] == 'secret_cookie'
-        html = WebHelper.get_html(url, is_secret_cookie)
+        html = WebUtil.get_html(url, is_secret_cookie)
         proxylist = []
         if not html:
             return proxylist
@@ -61,7 +61,7 @@ class Parser(object):
 
     @staticmethod
     def regular_parser(url, urldata):
-        content = WebHelper.get_html(url)
+        content = WebUtil.get_html(url)
         proxylist = []
         if not content:
             return proxylist
@@ -90,7 +90,7 @@ class Parser(object):
         proxylist = []
         try:
             modulename = urldata['methodname']
-            parser = __import__('crawler.parser', fromlist=('ParserExtension',))
+            parser = __import__('crawler.parser', fromlist=('ParserExtension', ))
             parser_ext = getattr(parser, 'ParserExtension')
             func = getattr(parser_ext, modulename)
             proxylist = func(urldata)
@@ -101,7 +101,7 @@ class Parser(object):
 
 class ParserExtension(object):
     def goubanjia(urldata):
-        html = WebHelper.get_html(urldata['urls'][0])
+        html = WebUtil.get_html(urldata['urls'][0])
         html = etree.HTML(html)
         proxy_data = html.xpath('//table/tbody/tr[position()>=1]')
         ipAndPort_xpath = './td[1]'

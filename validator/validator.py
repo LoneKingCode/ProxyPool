@@ -7,10 +7,13 @@ from multiprocessing import Queue
 
 import gevent
 
-from ProxyPool import config
-from ProxyPool.db.datastore import sqlhelper
-from ProxyPool.util.IpLocater import IpLocater
-from ProxyPool.util.webhelper import WebHelper
+import config
+from db.datastore import sqlhelper
+from util.IpLocater import IpLocater
+from util.WebUtil import WebUtil
+from concurrent.futures import ThreadPoolExecutor
+
+threadPool = ThreadPoolExecutor(max_workers=config.CHECK_SAVE_PROXY_THREAD, thread_name_prefix="validator_")
 
 
 def check_proxy_from_db(proxy, db_valid, db_invalid):
@@ -18,10 +21,8 @@ def check_proxy_from_db(proxy, db_valid, db_invalid):
     port = proxy['port']
     score = int(proxy['score'])
     # 检测代理ip是否可用 并更新下速度，协议和类型
-    proxy_str = '%s:%s' % (ip, port)
-    flag, type, protocol, speed = WebHelper.proxy_valid(ip, port, True)
+    flag, type, protocol, speed = WebUtil.proxy_valid(ip, port, True)
     if flag:
-        # print('数据库中 %s 有效√' % proxy_str)
         db_valid.value = db_valid.value + 1
         iplocater = IpLocater()
         ipaddr = iplocater.getIpAddr(iplocater.str2ip(ip))
@@ -64,8 +65,6 @@ def allocate_check_task(proxy_queue, proxy_waitsave_queue, valid_proxy, invalid_
         if wait_time > 3:
             # print('分配检查代理并放入待存储队列任务......')
             if len(tasklist) > 0:
-                # threading.Thread(target=start_check_proxy_wait_save,
-                #                 args=(tasklist, proxy_waitsave_queue, valid_proxy, invalid_proxy)).start()
                 start_check_proxy_wait_save(tasklist, proxy_waitsave_queue, valid_proxy, invalid_proxy)
                 wait_time = 0
 
@@ -73,8 +72,6 @@ def allocate_check_task(proxy_queue, proxy_waitsave_queue, valid_proxy, invalid_
             tasklist.append(proxy_queue.get())
             while len(tasklist) >= config.CHECK_SAVE_PROXY_THREAD:
                 # print('分配检查代理并放入待存储队列任务......')
-                # threading.Thread(target=start_check_proxy_wait_save,
-                #                 args=(tasklist, proxy_waitsave_queue, valid_proxy, invalid_proxy)).start()
                 start_check_proxy_wait_save(tasklist, proxy_waitsave_queue, valid_proxy, invalid_proxy)
                 wait_time = 0
                 tasklist.clear()
@@ -83,21 +80,16 @@ def allocate_check_task(proxy_queue, proxy_waitsave_queue, valid_proxy, invalid_
 
 def start_check_proxy_wait_save(tasklist, proxy_waitsave_queue, valid_proxy, invalid_proxy):
     # print('分配检查任务完成，开始执行任务......')
-    # checklist = []
-    # for proxy in tasklist:
-    #     checklist.append(gevent.spawn(check_proxy_wait_save, proxy, proxy_waitsave_queue, valid_proxy, invalid_proxy))
-    # gevent.joinall(checklist)
-    # print('任务执行完成......')
     for proxy in tasklist:
-        threading.Thread(target=check_proxy_wait_save,
-                         args=(proxy, proxy_waitsave_queue, valid_proxy, invalid_proxy)).start()
+        threadPool.submit(check_proxy_wait_save, args=(proxy, proxy_waitsave_queue, valid_proxy, invalid_proxy))
+        #threading.Thread(target=check_proxy_wait_save, args=(proxy, proxy_waitsave_queue, valid_proxy, invalid_proxy)).start()
 
 
 # 检测代理是否可用 可用放入队列等待入库
 def check_proxy_wait_save(proxy, proxy_waitsave_queue, valid_proxy, invalid_proxy):
     ip = proxy['ip']
     port = proxy['port']
-    flag, type, protocol, speed = WebHelper.proxy_valid(ip, port, True)
+    flag, type, protocol, speed = WebUtil.proxy_valid(ip, port, True)
     if flag:
         valid_proxy.value = valid_proxy.value + 1
         # print('%s:%s 有效√ 等待入库' % (proxy['ip'],proxy['port']))
@@ -112,8 +104,7 @@ def check_proxy_wait_save(proxy, proxy_waitsave_queue, valid_proxy, invalid_prox
         else:
             country = '国外'
             area = ipaddr
-        model = {'ip': ip, 'port': port, 'speed': speed, 'type': type, 'protocol': protocol, 'country': country,
-                 'area': area, 'score': 10, 'checkdatetime': str(datetime.now())}
+        model = {'ip': ip, 'port': port, 'speed': speed, 'type': type, 'protocol': protocol, 'country': country, 'area': area, 'score': 10, 'checkdatetime': str(datetime.now())}
         # 等待放入到代存储队列中
         proxy_waitsave_queue.put(model)
     else:

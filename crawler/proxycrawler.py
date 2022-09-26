@@ -2,7 +2,7 @@
 import os
 import sys
 
-from ProxyPool import config
+import config
 
 BASE_DIR = os.path.abspath(os.path.dirname(__file__))  # 项目路径
 rootPath = os.path.split(BASE_DIR)[0]
@@ -10,12 +10,11 @@ sys.path.append(rootPath)  # 不添加的话 在其他地方执行会提示no mo
 from datetime import datetime
 from multiprocessing import Value
 from concurrent.futures import ThreadPoolExecutor
-from ProxyPool.util.webhelper import WebHelper
-from ProxyPool.crawler.parser import Parser
-from ProxyPool.validator.validator import check_proxy_from_db
-from ProxyPool.db.datastore import sqlhelper
+from util.WebUtil import WebUtil
+from crawler.parser import Parser
+from validator.validator import check_proxy_from_db
+from db.datastore import sqlhelper
 import time
-
 proxy_set = set()
 
 
@@ -33,7 +32,6 @@ class ProxyCrawler(object):
     def run(self):
         self.first_run = True
         self.last_end_datetime = datetime.now()
-        checklist = []
         while True:
             self.valid_proxy.value = 0
             self.invalid_proxy.value = 0
@@ -43,7 +41,7 @@ class ProxyCrawler(object):
                 self.first_run = False
                 self.finish = False
                 proxy_set.clear()
-                config.CLIENT_IP = WebHelper.get_client_ip()
+                config.CLIENT_IP = WebUtil.get_client_ip()
                 # 去除数据库重复数据
                 sqlhelper.deduplication()
                 proxies = sqlhelper.get()
@@ -58,11 +56,11 @@ class ProxyCrawler(object):
                 db_valid = Value('i', 0)
                 db_invalid = Value('i', 0)
 
-                threadPool = ThreadPoolExecutor(max_workers=config.CHECK_DB_TASK,
-                                                thread_name_prefix="valid_proxy_")
+                threadPool = ThreadPoolExecutor(max_workers=config.CHECK_DB_TASK, thread_name_prefix="valid_proxy_")
                 for proxy in proxies:
                     threadPool.submit(check_proxy_from_db, proxy, db_valid, db_invalid)
                 threadPool.shutdown(wait=True)
+
                 print('\n>>>检查数据库数据完成')
                 proxies = sqlhelper.get()
                 proxy_count = len(proxies)
@@ -71,8 +69,7 @@ class ProxyCrawler(object):
                     print('>>>数据库中共 %d 条数据,小于设定数量 %d ,开始执行任务' % (proxy_count, config.DB_PROXY_MINIMUM))
                     # 加入抓取网站任务
                     print('>>>开始采集网站数据')
-                    threadPool = ThreadPoolExecutor(max_workers=config.CRAWL_TASK,
-                                                    thread_name_prefix="crawl_proxy_")
+                    threadPool = ThreadPoolExecutor(max_workers=config.CRAWL_TASK, thread_name_prefix="crawl_proxy_")
                     for urldata in config.UrlList:
                         threadPool.submit(self.crawl, urldata)
                     threadPool.shutdown(wait=True)
@@ -97,7 +94,7 @@ class ProxyCrawler(object):
         for url in urls:
             url_proxy_data = Parser.get_proxy_data(url, urldata)
             proxy_list = proxy_list + url_proxy_data
-            time.sleep(1.5)  # 酌情修改 有的网站限制的死
+            time.sleep(10)  # 酌情修改 有的网站限制的死
         proxy_count = len(proxy_list)
 
         success_count = exist_count = 0
@@ -107,7 +104,7 @@ class ProxyCrawler(object):
                 # 等待放入到队列中
                 while (True):
                     if self.proxy_queue.full():
-                        time.sleep(0.1)
+                        time.sleep(0.3)
                     else:
                         self.proxy_queue.put(proxy)
                         break

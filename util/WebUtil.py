@@ -9,14 +9,14 @@ import chardet
 import execjs
 import requests
 
-from ProxyPool import config
-from ProxyPool.config import HttpHeader, TIMEOUT, RETRY_TIME
-from ProxyPool.db.datastore import sqlhelper
-from ProxyPool.util.loghelper import LogHelper
+import config
+from config import HttpHeader, TIMEOUT, RETRY_TIME
+from db.datastore import sqlhelper
+from util.loghelper import LogHelper
 
 
 # CHROME_DRIVER_PATH = os.path.join(config.BASE_DIR,'plugin/chromedriver.exe')
-class WebHelper(object):
+class WebUtil(object):
     # @staticmethod
     # def get_cookie(url):
     #    driver = webdriver.Chrome(executable_path = config.CHROME_DRIVER_PATH)
@@ -62,8 +62,8 @@ class WebHelper(object):
                     r = requests.get(url, headers=headers, timeout=TIMEOUT)
                     r.encoding = chardet.detect(r.content)['encoding']
                     secret_js = r.text
-                    cookie_str = WebHelper.executejs(secret_js)
-                    cookie = WebHelper.parse_cookie(cookie_str)
+                    cookie_str = WebUtil.executejs(secret_js)
+                    cookie = WebUtil.parse_cookie(cookie_str)
                     headers['Cookie'] = cookie
                 r = requests.get(url, headers=headers, timeout=TIMEOUT)
                 r.encoding = chardet.detect(r.content)['encoding']
@@ -98,8 +98,8 @@ class WebHelper(object):
     @staticmethod
     def proxy_valid(ip, port, return_info=False):
         proxies = {"http": "http://%s:%s" % (ip, port), "https": "https://%s:%s" % (ip, port)}
-        flag, type, speed = WebHelper.check_proxy(proxies)
-        _flag, _type, _speed = WebHelper.check_proxy(proxies, False)
+        flag, type, speed = WebUtil.check_proxy(proxies)
+        _flag, _type, _speed = WebUtil.check_proxy(proxies, False)
         r_type = 0
         r_speed = 0
         r_protocol = 0
@@ -140,7 +140,7 @@ class WebHelper(object):
             else:
                 # 判断什么类型，协议
                 content = json.loads(response.text)
-                client_ip = WebHelper.get_client_ip()
+                client_ip = WebUtil.get_client_ip()
                 headers = content['headers']
                 ip = content['origin']
                 # 透明
@@ -168,7 +168,7 @@ class WebHelper(object):
 
 if __name__ == '__main__':
     for x in range(1, 60):
-        a = WebHelper.get_html('http://www.xicidaili.com/nn/2')
+        a = WebUtil.get_html('http://www.xicidaili.com/nn/2')
         time.sleep(0.5)
 
     b = 1

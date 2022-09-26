@@ -1,9 +1,9 @@
 import json
 
 import ProxyPool.config
-from ProxyPool import config
-from ProxyPool.db.datastore import sqlhelper
-from ProxyPool.db.sqlhelper import ProxyProtocol, ProxyType
+import config
+from db.datastore import sqlhelper
+from db.sqlhelper import ProxyProtocol, ProxyType
 from flask import Flask, render_template, request
 
 app = Flask(__name__)
@@ -44,8 +44,7 @@ def upload():
                 ip_port = p.split(':')
                 ip = ip_port[0]
                 port = ip_port[1]
-                model = {'ip': ip, 'port': port, 'speed': 0, 'score': 10, 'type': 0, 'protocol': 0, 'country': '无',
-                         'area': '无'}
+                model = {'ip': ip, 'port': port, 'speed': 0, 'score': 10, 'type': 0, 'protocol': 0, 'country': '无', 'area': '无'}
                 models.append(model)
             row_affect = sqlhelper.add(models)
             return json.dumps({'msg': '导入完成，导入{0}条数据'.format(row_affect)})
@@ -65,8 +64,7 @@ def importdata():
             ip_port = p.split(':')
             ip = ip_port[0]
             port = ip_port[1]
-            model = {'ip': ip, 'port': port, 'speed': 0, 'score': 10, 'type': 0, 'protocol': 0, 'country': '无',
-                     'area': '无'}
+            model = {'ip': ip, 'port': port, 'speed': 0, 'score': 10, 'type': 0, 'protocol': 0, 'country': '无', 'area': '无'}
             models.append(model)
         row_affect = sqlhelper.add(models)
         return json.dumps({'msg': '导入完成，导入{0}条数据'.format(row_affect)})
@@ -124,12 +122,8 @@ def get_pagedata():
         start = request.values.get('start', 0)
         length = request.values.get('length', 10)
         sql = 'select {0} from {1} where {2} order by {3} limit {4},{5}'
-        result = sqlhelper.query(
-            sql.format('*', 'Proxy_Main', 'country like \'%{0}%\' or area like \'%{0}%\''.format(searchkey),
-                       orderby + ' ' + orderdir, start, length))
-        totalcount = sqlhelper.query('select {0} from {1} where {2}'.format('count(*)', 'Proxy_Main',
-                                                                            'country like \'%{0}%\' or area like \'%{0}%\''.format(
-                                                                                searchkey)))[0]['count(*)']
+        result = sqlhelper.query(sql.format('*', 'Proxy_Main', 'country like \'%{0}%\' or area like \'%{0}%\''.format(searchkey), orderby + ' ' + orderdir, start, length))
+        totalcount = sqlhelper.query('select {0} from {1} where {2}'.format('count(*)', 'Proxy_Main', 'country like \'%{0}%\' or area like \'%{0}%\''.format(searchkey)))[0]['count(*)']
     except:
         return 'error'
     count = 0
@@ -154,9 +148,7 @@ def delete():
 
 def start_api_server():
     print('>>>API服务器开启成功,访问地址http://%s:%s' % (config.API_SERVER_IP, config.API_SERVER_PORT))
-    app.run(host=config.API_SERVER_IP,
-            port=config.API_SERVER_PORT,
-            debug=False)
+    app.run(host=config.API_SERVER_IP, port=config.API_SERVER_PORT, debug=False)
 
 
 if __name__ == '__main__':

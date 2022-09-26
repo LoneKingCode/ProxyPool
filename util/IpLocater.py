@@ -2,16 +2,15 @@
 import socket
 import struct
 
-from ProxyPool import config
+import config
 
 
 class IpLocater:
     # 国内地区
-    CHINA_AREA = ['省', '中国', '河北', '山东', '辽宁', '黑龙江', '吉林',
-                  '甘肃', '青海', '河南', '江苏', '湖北', '湖南',
-                  '江西', '浙江', '广东', '云南', '福建',
-                  '台湾', '海南', '山西', '四川', '陕西',
-                  '贵州', '安徽', '重庆', '北京', '上海', '天津', '广西', '内蒙', '西藏', '新疆', '宁夏', '香港', '澳门']
+    CHINA_AREA = [
+        '省', '中国', '河北', '山东', '辽宁', '黑龙江', '吉林', '甘肃', '青海', '河南', '江苏', '湖北', '湖南', '江西', '浙江', '广东', '云南', '福建', '台湾', '海南', '山西', '四川', '陕西', '贵州', '安徽', '重庆', '北京', '上海', '天津', '广西', '内蒙', '西藏',
+        '新疆', '宁夏', '香港', '澳门'
+    ]
 
     def __init__(self):
         self.ipdb = open(config.QQWRY_PATH, "rb")
@@ -34,7 +33,7 @@ class IpLocater:
         if offset:
             self.ipdb.seek(offset)
         str = self.ipdb.read(1)
-        (byte,) = struct.unpack('B', str)
+        (byte, ) = struct.unpack('B', str)
         if byte == 0x01 or byte == 0x02:
             p = self.getLong3()
             if p:
@@ -50,12 +49,12 @@ class IpLocater:
         countryAddr = ''
         areaAddr = ''
         str = self.ipdb.read(1)
-        (byte,) = struct.unpack('B', str)
+        (byte, ) = struct.unpack('B', str)
         if byte == 0x01:
             countryOffset = self.getLong3()
             self.ipdb.seek(countryOffset)
             str = self.ipdb.read(1)
-            (b,) = struct.unpack('B', str)
+            (b, ) = struct.unpack('B', str)
             if b == 0x02:
                 countryAddr = self.getString(self.getLong3())
                 self.ipdb.seek(countryOffset + 4)
@@ -90,7 +89,7 @@ class IpLocater:
         self.curEndIpOffset = of1 + (of2 << 16)
         self.ipdb.seek(self.curEndIpOffset)
         buf = self.ipdb.read(4)
-        (self.curEndIp,) = struct.unpack("I", buf)
+        (self.curEndIp, ) = struct.unpack("I", buf)
 
     def getIpAddr(self, ip):
         L = 0
@@ -129,18 +128,18 @@ class IpLocater:
             self.ipdb.seek(offset)
         str = b''
         ch = self.ipdb.read(1)
-        (byte,) = struct.unpack('B', ch)
+        (byte, ) = struct.unpack('B', ch)
         while byte != 0:
             str += ch
             ch = self.ipdb.read(1)
-            (byte,) = struct.unpack('B', ch)
+            (byte, ) = struct.unpack('B', ch)
         return str.decode('gbk')
 
     def ip2str(self, ip):
         return str(ip >> 24) + '.' + str((ip >> 16) & 0xff) + '.' + str((ip >> 8) & 0xff) + '.' + str(ip & 0xff)
 
     def str2ip(self, s):
-        (ip,) = struct.unpack('I', socket.inet_aton(s))
+        (ip, ) = struct.unpack('I', socket.inet_aton(s))
         return ((ip >> 24) & 0xff) | ((ip & 0xff) << 24) | ((ip >> 8) & 0xff00) | ((ip & 0xff00) << 8)
 
     def getLong3(self, offset=0):

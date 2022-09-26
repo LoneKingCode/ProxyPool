@@ -3,8 +3,8 @@ from enum import IntEnum
 
 import pymysql
 
-from ProxyPool.config import DATABASE_CONFIG
-from ProxyPool.util.loghelper import LogHelper
+from config import DATABASE_CONFIG
+from util.loghelper import LogHelper
 
 
 class ProxyType(IntEnum):
@@ -21,7 +21,6 @@ class ProxyProtocol(IntEnum):
 
 allow_columns = ['ip', 'port', 'type', 'protocol', 'country', 'area', 'score', 'speed']
 
-
 # 数据库中列 id ip port speed type protocol country area score checkdatetime
 
 # def singleton(cls):
@@ -32,6 +31,7 @@ allow_columns = ['ip', 'port', 'type', 'protocol', 'country', 'area', 'score', '
 #        return instances[cls]
 #    return _singleton
 # @singleton
+
 
 # Mysql辅助类
 class SqlHelper(object):
@@ -64,21 +64,24 @@ class SqlHelper(object):
     def create_db(self):
         cmd = "  DROP TABLE IF EXISTS `proxy_main`;"
         cmd1 = "CREATE TABLE `proxy_main` (                    \
-  `id` int(11) NOT NULL,                     \
-  `ip` varchar(255) DEFAULT NULL,                \
-  `port` varchar(255) DEFAULT NULL,           \
-  `speed` varchar(255) DEFAULT NULL,          \
-  `type` varchar(255) DEFAULT NULL,            \
-  `protocol` varchar(255) DEFAULT NULL,       \
-  `country` varchar(255) DEFAULT NULL,       \
-  `area` varchar(255) DEFAULT NULL,           \
-  `score` int(255) DEFAULT NULL,               \
-  `checkdatetime` varchar(255) DEFAULT NULL       \
-) ENGINE=MyISAM DEFAULT CHARSET=utf8mb4;  "
+        `id` int(11) NOT NULL,                     \
+        `ip` varchar(255) DEFAULT NULL,                \
+        `port` varchar(255) DEFAULT NULL,           \
+        `speed` varchar(255) DEFAULT NULL,          \
+        `type` varchar(255) DEFAULT NULL,            \
+        `protocol` varchar(255) DEFAULT NULL,       \
+        `country` varchar(255) DEFAULT NULL,       \
+        `area` varchar(255) DEFAULT NULL,           \
+        `score` int(255) DEFAULT NULL,               \
+        `checkdatetime` varchar(255) DEFAULT NULL       \
+        )  DEFAULT CHARSET=utf8mb4;  "
+
         cmd2 = " ALTER TABLE `proxy_main`  \
   ADD PRIMARY KEY (`id`);   "
+
         cmd3 = "  ALTER TABLE `proxy_main`    \
   MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=1;"
+
         self.execute(cmd)
         self.execute(cmd1)
         self.execute(cmd2)

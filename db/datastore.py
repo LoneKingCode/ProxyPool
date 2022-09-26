@@ -1,6 +1,6 @@
 import time
 
-from ProxyPool.db.sqlhelper import SqlHelper
+from db.sqlhelper import SqlHelper
 
 sqlhelper = SqlHelper()
 
