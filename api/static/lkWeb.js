@@ -60,52 +60,52 @@ lkWeb.DeleteMulti = function (area, ids, ctrl, table, value) {
         return;
     }
     parent.layer.confirm("确认删除" + ids.length + "条数据？", {
-            btn: ["确认", "取消"]
-        }, function () {
-            var postUrl = '/' + area + '/' + ctrl + '/delete/';
-            var _value = "";
-            if (IsNotEmpty(value))
-                _value = value;
-            $.ajax(
-                {
-                    type: 'post',
-                    url: postUrl,
-                    data: {
-                        ids: ids,
-                        value: _value,
-                        csrfmiddlewaretoken: lkWeb.GetCsrfToken()
-                    },
-                    success: function (result) {
-                        if (result.flag == true) {
-                            parent.layer.alert("删除成功")
-                            if (table != null && table != undefined)
-                                table.draw(false);//刷新datatable
-                            else {
-                                window.location.reload();
-                            }
-                        } else {
-                            if (IsNotEmpty(result.msg))
-                                parent.layer.alert(result.msg);
-                            else
-                                parent.layer.alert("删除失败");
+        btn: ["确认", "取消"]
+    }, function () {
+        var postUrl = '/' + area + '/' + ctrl + '/delete/';
+        var _value = "";
+        if (IsNotEmpty(value))
+            _value = value;
+        $.ajax(
+            {
+                type: 'post',
+                url: postUrl,
+                data: {
+                    ids: ids,
+                    value: _value,
+                    csrfmiddlewaretoken: lkWeb.GetCsrfToken()
+                },
+                success: function (result) {
+                    if (result.flag == true) {
+                        parent.layer.alert("删除成功")
+                        if (table != null && table != undefined)
+                            table.draw(false);//刷新datatable
+                        else {
+                            window.location.reload();
                         }
-                    },
-                    error: function (err) {
-                        console.log(err);
-                        parent.layer.alert("删除失败");
+                    } else {
+                        if (IsNotEmpty(result.msg))
+                            parent.layer.alert(result.msg);
+                        else
+                            parent.layer.alert("删除失败");
                     }
-                })
-        }, function () {
+                },
+                error: function (err) {
+                    console.log(err);
+                    parent.layer.alert("删除失败");
+                }
+            })
+    }, function () {
 
-        }
+    }
     )
 }
 
 //删除单个
 lkWeb.Delete = function (area, id, ctrl, table, value) {
     parent.layer.confirm("确认删除？", {
-            btn: ["确认", "取消"]
-        },
+        btn: ["确认", "取消"]
+    },
         function () {
             var postUrl = '/' + area + '/' + ctrl + '/delete';
             var _value = "";
@@ -250,8 +250,8 @@ lkWeb.CloseLoad = function () {
 
 lkWeb.Confirm = function (msg, successCallBack, cancelCallBack) {
     parent.layer.confirm(msg, {
-            btn: ["确认", "取消"]
-        },
+        btn: ["确认", "取消"]
+    },
         function () {
             if (IsFunction(successCallBack))
                 successCallBack();
@@ -263,12 +263,12 @@ lkWeb.Confirm = function (msg, successCallBack, cancelCallBack) {
 }
 
 //Datatable
-
 lkWeb.Search = function (searchKey, table) {
     _searchKey = searchKey;
     table.search(_searchKey).draw(); //！！！！！！！！！！！搜索暂时无效 很无奈！！！ 只能先这样代替了
 }
 var _searchKey = "";
+
 var _value = "";
 //tableID:控件ID，columns:列集合，dataUrl:获取数据的URL，value:补充的值给后台(QueryBase)用
 lkWeb.LoadTable = function (tableID, colums, dataUrl, value) {
@@ -290,17 +290,19 @@ lkWeb.LoadTable = function (tableID, colums, dataUrl, value) {
                     param.orderBy = orderBy;
                     param.orderDir = orderDir; //asc or desc
                 }
-                param.searchKey = _searchKey;
+                param.searchKey = d.search.value
                 param.value = _value;
 
                 return param;
             },
 
         },
+
         "searching": false,
         "serverSide": true, //启用服务器端分页
         'autoWidth': true,
         "sPaginationType": "full_numbers",
+        "lengthMenu": [30, 90, 180],
         "oLanguage": {
             "sProcessing": "请求数据中......",
             "sLengthMenu": "每页显示 _MENU_ 条记录",

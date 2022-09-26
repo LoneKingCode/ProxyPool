@@ -12,6 +12,8 @@ import requests
 import config
 from config import HttpHeader, TIMEOUT, RETRY_TIME
 from db.datastore import sqlhelper
+from enum.ProxyType import ProxyType
+from enum.ProxyProtocol import ProxyProtocol
 from util.loghelper import LogHelper
 
 
@@ -73,7 +75,7 @@ class WebUtil(object):
                     return r.text
             except Exception as e:
                 err_msg += str(e) + ' '
-                proxies = sqlhelper.get({'country': '国外'}, 10)
+                proxies = sqlhelper.get_valid_proxy(100)
                 if not proxies:
                     continue
                 try:
@@ -106,17 +108,17 @@ class WebUtil(object):
         # http
         if flag and return_info:
             r_type = type
-            r_protocol = 0
+            r_protocol = ProxyProtocol.http.value
             r_speed = speed
         # https
         elif _flag and return_info:
             r_type = _type
-            r_protocol = 1
+            r_protocol = ProxyProtocol.https.value1
             r_speed = _speed
         # http_https
         elif flag and _flag and return_info:
             r_type = _type
-            r_protocol = 2
+            r_protocol = ProxyProtocol.http_https.value
             r_speed = int((speed + _speed) / 2)
 
         if not return_info:
@@ -148,12 +150,12 @@ class WebUtil(object):
                 # 还发现一个少见的情况headers中 "Forwarded": "for=本机IP:8419;by=srv-vpn:89",
                 forwaded = headers.get('Forwarded', '')
                 if (client_ip in ip or ',' in ip or ip in forwaded):
-                    type = 2
+                    type = ProxyType.透明.value
                 # 普通匿名 在headers中存在 "Proxy-Connection": "keep-alive" 还是暴漏了
                 elif headers.get('Proxy-Connection', None):
-                    type = 1
+                    type = ProxyType.匿名.value
                 else:
-                    type = 0
+                    type = ProxyType.高匿.value
                 return True, type, speed
 
         except Exception as e:

@@ -1,11 +1,13 @@
 import time
 
 from db.sqlhelper import SqlHelper
+from decorator.ExceptionDecorator import exception
 
 sqlhelper = SqlHelper()
 
 
 # 保存代理数据到数据库中
+@exception
 def data_store(proxy_waitsave_queue):
     while True:
         time.sleep(20)

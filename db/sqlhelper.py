@@ -1,23 +1,9 @@
 # coding:utf-8
-from enum import IntEnum
 
 import pymysql
 
 from config import DATABASE_CONFIG
 from util.loghelper import LogHelper
-
-
-class ProxyType(IntEnum):
-    高匿 = 0,
-    匿名 = 1,
-    透明 = 2,
-
-
-class ProxyProtocol(IntEnum):
-    http = 0,
-    https = 1,
-    http_https = 2,
-
 
 allow_columns = ['ip', 'port', 'type', 'protocol', 'country', 'area', 'score', 'speed']
 
@@ -35,6 +21,18 @@ allow_columns = ['ip', 'port', 'type', 'protocol', 'country', 'area', 'score', '
 
 # Mysql辅助类
 class SqlHelper(object):
+    @staticmethod
+    def escape_string(value):
+        value = str(value)
+        value = value.replace('\\', '\\\\')
+        value = value.replace('\0', '\\0')
+        value = value.replace('\n', '\\n')
+        value = value.replace('\r', '\\r')
+        value = value.replace('\032', '\\Z')
+        value = value.replace("'", "\\'")
+        value = value.replace('"', '\\"')
+        value = value.replace(',', ',')
+        return value
 
     # def __init__(self):
     #    #self.__create_conn()
@@ -60,36 +58,6 @@ class SqlHelper(object):
                 return self.conn
             except Exception as e:
                 LogHelper.error('获取数据库连接出错:' + str(e))
-
-    def create_db(self):
-        cmd = "  DROP TABLE IF EXISTS `proxy_main`;"
-        cmd1 = "CREATE TABLE `proxy_main` (                    \
-        `id` int(11) NOT NULL,                     \
-        `ip` varchar(255) DEFAULT NULL,                \
-        `port` varchar(255) DEFAULT NULL,           \
-        `speed` varchar(255) DEFAULT NULL,          \
-        `type` varchar(255) DEFAULT NULL,            \
-        `protocol` varchar(255) DEFAULT NULL,       \
-        `country` varchar(255) DEFAULT NULL,       \
-        `area` varchar(255) DEFAULT NULL,           \
-        `score` int(255) DEFAULT NULL,               \
-        `checkdatetime` varchar(255) DEFAULT NULL       \
-        )  DEFAULT CHARSET=utf8mb4;  "
-
-        cmd2 = " ALTER TABLE `proxy_main`  \
-  ADD PRIMARY KEY (`id`);   "
-
-        cmd3 = "  ALTER TABLE `proxy_main`    \
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=1;"
-
-        self.execute(cmd)
-        self.execute(cmd1)
-        self.execute(cmd2)
-        self.execute(cmd3)
-
-    def drop_db(self):
-        # BaseModel.metadata.drop_all(engine)
-        pass
 
     def execute(self, sql):
         return self.execute_many([sql])
@@ -128,13 +96,10 @@ class SqlHelper(object):
         cursor = conn.cursor(cursor=pymysql.cursors.DictCursor)
         result = None
         try:
-            if count == 0 or not count:
-                cursor.execute(sql)
-                result = cursor.fetchall()
-            else:
-                cursor.execute(sql)
-                count = int(count)
-                result = cursor.fetchmany(count)
+            if count and count > 0:
+                sql += ' limit ' + count
+            cursor.execute(sql)
+            result = cursor.fetchall()
         except Exception as e:
             LogHelper.error('执行{0}出错,错误原因:{1}'.format(sql, str(e)))
         finally:
@@ -166,7 +131,7 @@ class SqlHelper(object):
             where = ''
             for key, value in conditions.items():
                 if key in allow_columns:
-                    where += key + '=' + '\'' + value + '\'' + ' and '
+                    where += key + '=' + '\'' + SqlHelper.escape_string(value) + '\'' + ' and '
             where = where.strip('and ')
             if where == '':
                 where = '1=1'
@@ -176,6 +141,16 @@ class SqlHelper(object):
             result = self.query('select * from proxy_main where ' + where, count)
         return result
 
+    def get_valid_proxy(self, count=0, country=''):
+        where = 'score > 10'
+        if country:
+            where += " and country = '{}'".format(country)
+        if count == 0 or not count:
+            result = self.query("select * from proxy_main where {} order by score desc".format(where))
+        else:
+            result = self.query("select * from proxy_main where {} order by score desc limit {}".format(where, count))
+        return result
+
     def update(self, model, conditions):
         where = ''
         for key, value in conditions.items():
@@ -183,7 +158,7 @@ class SqlHelper(object):
         where = where.strip('and ')
         values = ''
         for key, value in model.items():
-            values += '{0}=\'{1}\','.format(key, str(value))
+            values += '{0}=\'{1}\','.format(key, SqlHelper.escape_string(str(value)))
         values = values.strip(',')
         effect_row = self.execute('update proxy_main set ' + values + ' where ' + where)
         return effect_row
@@ -194,7 +169,7 @@ class SqlHelper(object):
             return -1
         for key, value in conditions.items():
             if key in allow_columns:
-                where += key + '=' + '\'' + str(value) + '\'' + ' and '
+                where += key + '=' + '\'' + SqlHelper.escape_string(str(value)) + '\'' + ' and '
         where = where.strip('and ')
         effect_row = self.execute('delete from proxy_main where ' + where)
         return effect_row
@@ -202,8 +177,7 @@ class SqlHelper(object):
 
 if __name__ == '__main__':
     sql = SqlHelper()
-    sql.create_db()
-    print('创建数据库表结构完成，请前往mysql内检查是否成功创建')
+
     # a =
     # a =
     # sql.add([{'ip':'1.1.1.1','port':'2222','speed':0,'type':0,'protocol':0,'country':'asd','area':'fff','score':'10'}])

@@ -5,10 +5,9 @@ import time
 from datetime import datetime
 from multiprocessing import Queue
 
-import gevent
-
 import config
 from db.datastore import sqlhelper
+from decorator.ExceptionDecorator import exception
 from util.IpLocater import IpLocater
 from util.WebUtil import WebUtil
 from concurrent.futures import ThreadPoolExecutor
@@ -56,6 +55,7 @@ def check_proxy_from_db(proxy, db_valid, db_invalid):
     sys.stdout.flush()
 
 
+@exception
 def allocate_check_task(proxy_queue, proxy_waitsave_queue, valid_proxy, invalid_proxy):
     tasklist = []
     wait_time = 0
@@ -78,21 +78,23 @@ def allocate_check_task(proxy_queue, proxy_waitsave_queue, valid_proxy, invalid_
         time.sleep(15)
 
 
+@exception
 def start_check_proxy_wait_save(tasklist, proxy_waitsave_queue, valid_proxy, invalid_proxy):
     # print('分配检查任务完成，开始执行任务......')
     for proxy in tasklist:
-        threadPool.submit(check_proxy_wait_save, args=(proxy, proxy_waitsave_queue, valid_proxy, invalid_proxy))
+        threadPool.submit(check_proxy_wait_save, proxy, proxy_waitsave_queue, valid_proxy, invalid_proxy)
         #threading.Thread(target=check_proxy_wait_save, args=(proxy, proxy_waitsave_queue, valid_proxy, invalid_proxy)).start()
 
 
 # 检测代理是否可用 可用放入队列等待入库
+@exception
 def check_proxy_wait_save(proxy, proxy_waitsave_queue, valid_proxy, invalid_proxy):
     ip = proxy['ip']
     port = proxy['port']
     flag, type, protocol, speed = WebUtil.proxy_valid(ip, port, True)
     if flag:
         valid_proxy.value = valid_proxy.value + 1
-        # print('%s:%s 有效√ 等待入库' % (proxy['ip'],proxy['port']))
+        #print('%s:%s 有效√ 等待入库' % (proxy['ip'], proxy['port']))
 
         country = '国内'
         area = '北京'

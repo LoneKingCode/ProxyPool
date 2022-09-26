@@ -3,6 +3,7 @@ import os
 import sys
 
 import config
+from decorator.ExceptionDecorator import exception
 
 BASE_DIR = os.path.abspath(os.path.dirname(__file__))  # 项目路径
 rootPath = os.path.split(BASE_DIR)[0]
@@ -29,6 +30,7 @@ class ProxyCrawler(object):
         self.valid_proxy = valid_proxy
         self.invalid_proxy = invalid_proxy
 
+    @exception
     def run(self):
         self.first_run = True
         self.last_end_datetime = datetime.now()
@@ -83,7 +85,7 @@ class ProxyCrawler(object):
                     self.last_end_datetime = datetime.now()
             else:
                 print('>>>等待执行，下次任务执行还有 %d 分钟' % (config.CRAWL_INTERVAL - m_diff))
-            time.sleep(10)
+            time.sleep(30)
 
     def crawl(self, urldata):
         name = urldata['name']
@@ -111,7 +113,7 @@ class ProxyCrawler(object):
                 success_count = success_count + 1
             else:
                 exist_count = exist_count + 1
-        print('>>>分析 %s 完成,共 %d 条代理数据,新数据 %d 条，%d 条已存在' % (name, proxy_count, success_count, exist_count))
+        print('>>>分析 %s 完成,共 %d 条代理数据,新数据 %d 条，%d 条已存在,proxy_queue.qsize() %d' % (name, proxy_count, success_count, exist_count, self.proxy_queue.qsize()))
 
 
 if __name__ == '__main__':

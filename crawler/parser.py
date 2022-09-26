@@ -12,19 +12,20 @@ class Parser(object):
     @staticmethod
     # 分析获取代理数据
     def get_proxy_data(url, urldata):
-        proxy_type = urldata['type']
+        type = urldata['type']
         proxylist = []
         try:
 
-            if proxy_type == 'xpath':
+            if type == 'xpath':
                 proxylist = Parser.xpath_parser(url, urldata)
-            elif proxy_type == 'regular':
+            elif type == 'regular':
                 proxylist = Parser.regular_parser(url, urldata)
-            elif proxy_type == 'custom':
+            elif type == 'custom':
                 proxylist = Parser.custom_parser(url, urldata)
             else:
                 print('网址配置错误，请填写正确的type')
                 LogHelper.error('网址配置错误，请填写正确的type,url:' + url)
+            print('url:{} type:{} 获取数据数:{}'.format(url, type, len(proxylist)))
             return proxylist
         except Exception as e:
             LogHelper.error('转换失败,URL:' + url + ' 错误信息:' + str(e))
