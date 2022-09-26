@@ -113,7 +113,7 @@ class WebUtil(object):
         # https
         elif _flag and return_info:
             r_type = _type
-            r_protocol = ProxyProtocol.https.value1
+            r_protocol = ProxyProtocol.https.value
             r_speed = _speed
         # http_https
         elif flag and _flag and return_info:
