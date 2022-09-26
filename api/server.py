@@ -4,8 +4,8 @@ import config
 from db.datastore import sqlhelper
 from db.sqlhelper import SqlHelper
 from flask import Flask, render_template, request
-from enum.ProxyType import ProxyType
-from enum.ProxyProtocol import ProxyProtocol
+from enums.ProxyType import ProxyType
+from enums.ProxyProtocol import ProxyProtocol
 
 app = Flask(__name__)
 

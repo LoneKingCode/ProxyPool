@@ -5,7 +5,7 @@ import random
 BASE_DIR = os.path.abspath(os.path.dirname(__file__))
 
 # API服务器IP
-API_SERVER_IP = '0.0.0.0'
+API_SERVER_IP = '127.0.0.1'
 # API服务器端口
 API_SERVER_PORT = 8000
 
@@ -121,7 +121,7 @@ CRAWL_INTERVAL = 60
 # 检查数据库中数据有效性及更新数据线程数
 CHECK_DB_TASK = 50
 # 同时进行几个网站的采集任务
-CRAWL_TASK = 2
+CRAWL_TASK = 5
 # 检查数据有效性及存储的线程数
 CHECK_SAVE_PROXY_THREAD = 10
 # 连接超时

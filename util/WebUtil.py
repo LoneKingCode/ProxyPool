@@ -12,8 +12,8 @@ import requests
 import config
 from config import HttpHeader, TIMEOUT, RETRY_TIME
 from db.datastore import sqlhelper
-from enum.ProxyType import ProxyType
-from enum.ProxyProtocol import ProxyProtocol
+from enums.ProxyType import ProxyType
+from enums.ProxyProtocol import ProxyProtocol
 from util.loghelper import LogHelper
 
 
