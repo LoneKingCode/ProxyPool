@@ -38,57 +38,57 @@ UrlList = [
             'protocol': '',
         },
     },
-    # {
-    #     'name': '开心代理',
-    #     'urls': ['http://www.kxdaili.com/dailiip/%s/%s.html' % (t, i) for t in range(1, 3) for i in range(1, 11)],
-    #     'type': 'xpath',
-    #     'pattern': '//table//tr[position()>1]',
-    #     'position': {
-    #         'ip': './td[1]',
-    #         'port': './td[2]',
-    #         'type': './td[3]',
-    #         'protocol': './td[4]',
-    #     }
-    # },
-    # {
-    #     'name': '89免费代理',
-    #     'urls': ['http://www.89ip.cn/tqdl.html?api=1&num=9999&port=&address=&isp='],
-    #     'type': 'regular',
-    #     'pattern': '([0-9]+.[0-9]+.[0-9]+.[0-9]+):([0-9]+)',
-    #     'position': {
-    #         'ip': 0,
-    #         'port': 1,
-    #         'type': '',
-    #         'protocol': '',
-    #     },
-    # },
-    # {
-    #     'name': '66免费代理网',
-    #     #选取每个地区的前五页数据 33页已经是不存在的了
-    #     'urls': ['http://www.66ip.cn/areaindex_%s/%s.html' % (n, i) for n in range(1, 34) for i in range(1, 6)] + ['http://www.66ip.cn/%s.html' % i for i in range(1, 6)],
-    #     'type': 'xpath',
-    #     'pattern': "//*[@id=‘footer’]/div/table/tbody/tr[position()>1]",
-    #     'position': {
-    #         'ip': './td[1]',
-    #         'port': './td[2]',
-    #         'type': './td[4]',
-    #         'protocol': '',
-    #     },
-    #     'protocol': '',
-    #     'cookie': 'secret_cookie'
-    # },
-    # {
-    #     'name': '快代理',
-    #     'urls': ['http://www.kuaidaili.com/free/%s/%s/' % (m, n) for m in ['inha', 'intr'] for n in range(1, 5)],
-    #     'type': 'xpath',
-    #     'pattern': ".//*[@id='list']/table/tbody/tr[position()>0]",
-    #     'position': {
-    #         'ip': './td[1]',
-    #         'port': './td[2]',
-    #         'type': './td[3]',
-    #         'protocol': './td[4]'
-    #     }
-    # }
+    {
+        'name': '开心代理',
+        'urls': ['http://www.kxdaili.com/dailiip/%s/%s.html' % (t, i) for t in range(1, 3) for i in range(1, 11)],
+        'type': 'xpath',
+        'pattern': '//table//tr[position()>1]',
+        'position': {
+            'ip': './td[1]',
+            'port': './td[2]',
+            'type': './td[3]',
+            'protocol': './td[4]',
+        }
+    },
+    {
+        'name': '89免费代理',
+        'urls': ['http://www.89ip.cn/tqdl.html?api=1&num=9999&port=&address=&isp='],
+        'type': 'regular',
+        'pattern': '([0-9]+.[0-9]+.[0-9]+.[0-9]+):([0-9]+)',
+        'position': {
+            'ip': 0,
+            'port': 1,
+            'type': '',
+            'protocol': '',
+        },
+    },
+    {
+        'name': '66免费代理网',
+        #选取每个地区的前五页数据 33页已经是不存在的了
+        'urls': ['http://www.66ip.cn/areaindex_%s/%s.html' % (n, i) for n in range(1, 34) for i in range(1, 6)] + ['http://www.66ip.cn/%s.html' % i for i in range(1, 6)],
+        'type': 'xpath',
+        'pattern': "//*[@id=‘footer’]/div/table/tbody/tr[position()>1]",
+        'position': {
+            'ip': './td[1]',
+            'port': './td[2]',
+            'type': './td[4]',
+            'protocol': '',
+        },
+        'protocol': '',
+        'cookie': 'secret_cookie'
+    },
+    {
+        'name': '快代理',
+        'urls': ['http://www.kuaidaili.com/free/%s/%s/' % (m, n) for m in ['inha', 'intr'] for n in range(1, 5)],
+        'type': 'xpath',
+        'pattern': ".//*[@id='list']/table/tbody/tr[position()>0]",
+        'position': {
+            'ip': './td[1]',
+            'port': './td[2]',
+            'type': './td[3]',
+            'protocol': './td[4]'
+        }
+    }
     ##国内访问不了 代理数量1W+ 但是获取有问题 提示需要执行js 而且5秒后才跳转
     # {
     #     'name':'hidemy',
