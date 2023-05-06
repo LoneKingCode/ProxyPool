@@ -302,7 +302,7 @@ lkWeb.LoadTable = function (tableID, colums, dataUrl, value) {
         "serverSide": true, //启用服务器端分页
         'autoWidth': true,
         "sPaginationType": "full_numbers",
-        "lengthMenu": [30, 90, 180],
+        "lengthMenu": [10, 30, 90],
         "oLanguage": {
             "sProcessing": "请求数据中......",
             "sLengthMenu": "每页显示 _MENU_ 条记录",

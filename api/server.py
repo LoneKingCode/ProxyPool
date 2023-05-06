@@ -111,12 +111,31 @@ def get():
     return list_result
 
 
+@app.route('/get_format', methods=['POST', 'GET'])
+def get_format():
+    result = []
+    try:
+        # /?count=5&condition=speed<3 自定义where条件
+        # /?count=5&country=国外 只能输入=的条件
+        # / 获取所有记录
+        condition = request.args.get('condition')
+        count = request.args.get('count')
+        if condition:
+            result = sqlhelper.query('select * from Proxy_Main where %s' % condition, count)
+        else:
+            result = sqlhelper.get(request.args, count)
+    except:
+        return 'error'
+    list_result = '<br/>'.join(["{0}://{1}:{2}".format(('http' if r['type'] == ProxyProtocol.http.value else 'https'), r['ip'], r['port']) for r in result])
+    return list_result
+
+
 @app.route('/get_pagedata', methods=['POST', 'GET'])
 def get_pagedata():
     result = []
     try:
         searchkey = SqlHelper.escape_string(request.values.get('searchKey', ''))
-        orderby = SqlHelper.escape_string(request.values.get('orderBy', 'id'))
+        orderby = SqlHelper.escape_string(request.values.get('orderBy', 'score'))
         draw = SqlHelper.escape_string(request.values.get('draw', ''))
         orderdir = SqlHelper.escape_string(request.values.get('orderDir', 'desc'))  # asc or desc
         start = SqlHelper.escape_string(request.values.get('start', 0))

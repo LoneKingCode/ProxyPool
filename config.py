@@ -5,7 +5,7 @@ import random
 BASE_DIR = os.path.abspath(os.path.dirname(__file__))
 
 # API服务器IP
-API_SERVER_IP = '127.0.0.1'
+API_SERVER_IP = '0.0.0.0'
 # API服务器端口
 API_SERVER_PORT = 8000
 
@@ -38,57 +38,57 @@ UrlList = [
             'protocol': '',
         },
     },
-    {
-        'name': '开心代理',
-        'urls': ['http://www.kxdaili.com/dailiip/%s/%s.html' % (t, i) for t in range(1, 3) for i in range(1, 11)],
-        'type': 'xpath',
-        'pattern': '//table//tr[position()>1]',
-        'position': {
-            'ip': './td[1]',
-            'port': './td[2]',
-            'type': './td[3]',
-            'protocol': './td[4]',
-        }
-    },
-    {
-        'name': '89免费代理',
-        'urls': ['http://www.89ip.cn/tqdl.html?api=1&num=9999&port=&address=&isp='],
-        'type': 'regular',
-        'pattern': '([0-9]+.[0-9]+.[0-9]+.[0-9]+):([0-9]+)',
-        'position': {
-            'ip': 0,
-            'port': 1,
-            'type': '',
-            'protocol': '',
-        },
-    },
-    {
-        'name': '66免费代理网',
-        #选取每个地区的前五页数据 33页已经是不存在的了
-        'urls': ['http://www.66ip.cn/areaindex_%s/%s.html' % (n, i) for n in range(1, 34) for i in range(1, 6)] + ['http://www.66ip.cn/%s.html' % i for i in range(1, 6)],
-        'type': 'xpath',
-        'pattern': "//*[@id=‘footer’]/div/table/tbody/tr[position()>1]",
-        'position': {
-            'ip': './td[1]',
-            'port': './td[2]',
-            'type': './td[4]',
-            'protocol': '',
-        },
-        'protocol': '',
-        'cookie': 'secret_cookie'
-    },
-    {
-        'name': '快代理',
-        'urls': ['http://www.kuaidaili.com/free/%s/%s/' % (m, n) for m in ['inha', 'intr'] for n in range(1, 5)],
-        'type': 'xpath',
-        'pattern': ".//*[@id='list']/table/tbody/tr[position()>0]",
-        'position': {
-            'ip': './td[1]',
-            'port': './td[2]',
-            'type': './td[3]',
-            'protocol': './td[4]'
-        }
-    }
+    # {
+    #     'name': '开心代理',
+    #     'urls': ['http://www.kxdaili.com/dailiip/%s/%s.html' % (t, i) for t in range(1, 3) for i in range(1, 11)],
+    #     'type': 'xpath',
+    #     'pattern': '//table//tr[position()>1]',
+    #     'position': {
+    #         'ip': './td[1]',
+    #         'port': './td[2]',
+    #         'type': './td[3]',
+    #         'protocol': './td[4]',
+    #     }
+    # },
+    # {
+    #     'name': '89免费代理',
+    #     'urls': ['http://www.89ip.cn/tqdl.html?api=1&num=9999&port=&address=&isp='],
+    #     'type': 'regular',
+    #     'pattern': '([0-9]+.[0-9]+.[0-9]+.[0-9]+):([0-9]+)',
+    #     'position': {
+    #         'ip': 0,
+    #         'port': 1,
+    #         'type': '',
+    #         'protocol': '',
+    #     },
+    # },
+    # {
+    #     'name': '66免费代理网',
+    #     #选取每个地区的前五页数据 33页已经是不存在的了
+    #     'urls': ['http://www.66ip.cn/areaindex_%s/%s.html' % (n, i) for n in range(1, 34) for i in range(1, 6)] + ['http://www.66ip.cn/%s.html' % i for i in range(1, 6)],
+    #     'type': 'xpath',
+    #     'pattern': "//*[@id=‘footer’]/div/table/tbody/tr[position()>1]",
+    #     'position': {
+    #         'ip': './td[1]',
+    #         'port': './td[2]',
+    #         'type': './td[4]',
+    #         'protocol': '',
+    #     },
+    #     'protocol': '',
+    #     'cookie': 'secret_cookie'
+    # },
+    # {
+    #     'name': '快代理',
+    #     'urls': ['http://www.kuaidaili.com/free/%s/%s/' % (m, n) for m in ['inha', 'intr'] for n in range(1, 5)],
+    #     'type': 'xpath',
+    #     'pattern': ".//*[@id='list']/table/tbody/tr[position()>0]",
+    #     'position': {
+    #         'ip': './td[1]',
+    #         'port': './td[2]',
+    #         'type': './td[3]',
+    #         'protocol': './td[4]'
+    #     }
+    # }
     ##国内访问不了 代理数量1W+ 但是获取有问题 提示需要执行js 而且5秒后才跳转
     # {
     #     'name':'hidemy',
@@ -115,7 +115,7 @@ DATABASE_CONFIG = {
 QQWRY_PATH = os.path.join(BASE_DIR, 'data/qqwry.dat')
 
 # 数据库中最低代理数量 低于这个数量会执行任务开始采集
-DB_PROXY_MINIMUM = 2000
+DB_PROXY_MINIMUM = 3000
 # 抓取间隔 每隔时间会检测是否需要进行采集任务 *单位分钟
 CRAWL_INTERVAL = 60
 # 检查数据库中数据有效性及更新数据线程数
@@ -124,8 +124,8 @@ CHECK_DB_TASK = 50
 CRAWL_TASK = 5
 # 检查数据有效性及存储的线程数
 CHECK_SAVE_PROXY_THREAD = 10
-# 连接超时
-TIMEOUT = 8
+# 验证代理连接超时
+TIMEOUT = 10
 # 爬虫抓取网页数据重试次数
 RETRY_TIME = 3
 

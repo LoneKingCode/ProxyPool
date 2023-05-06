@@ -46,6 +46,8 @@ class ProxyCrawler(object):
                 config.CLIENT_IP = WebUtil.get_client_ip()
                 # 去除数据库重复数据
                 sqlhelper.deduplication()
+                # 分数太低的删除
+                sqlhelper.removeInvalidProxy()
                 proxies = sqlhelper.get()
                 db_proxy_num = len(proxies)
                 print('>>>数据库中代理数量:%d' % db_proxy_num)
@@ -58,10 +60,10 @@ class ProxyCrawler(object):
                 db_valid = Value('i', 0)
                 db_invalid = Value('i', 0)
 
-                threadPool = ThreadPoolExecutor(max_workers=config.CHECK_DB_TASK, thread_name_prefix="valid_proxy_")
-                for proxy in proxies:
-                    threadPool.submit(check_proxy_from_db, proxy, db_valid, db_invalid)
-                threadPool.shutdown(wait=True)
+                # threadPool = ThreadPoolExecutor(max_workers=config.CHECK_DB_TASK, thread_name_prefix="valid_proxy_")
+                # for proxy in proxies:
+                #     threadPool.submit(check_proxy_from_db, proxy, db_valid, db_invalid)
+                # threadPool.shutdown(wait=True)
 
                 print('\n>>>检查数据库数据完成')
                 proxies = sqlhelper.get()
@@ -113,7 +115,7 @@ class ProxyCrawler(object):
                 success_count = success_count + 1
             else:
                 exist_count = exist_count + 1
-        print('>>>分析 %s 完成,共 %d 条代理数据,新数据 %d 条，%d 条已存在,proxy_queue.qsize() %d' % (name, proxy_count, success_count, exist_count, self.proxy_queue.qsize()))
+        print('>>>分析 %s 完成,共 %d 条代理数据,新数据 %d 条，%d 条已存在' % (name, proxy_count, success_count, exist_count))
 
 
 if __name__ == '__main__':

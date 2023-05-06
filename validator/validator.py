@@ -67,6 +67,7 @@ def allocate_check_task(proxy_queue, proxy_waitsave_queue, valid_proxy, invalid_
             if len(tasklist) > 0:
                 start_check_proxy_wait_save(tasklist, proxy_waitsave_queue, valid_proxy, invalid_proxy)
                 wait_time = 0
+                tasklist.clear()
 
         while not proxy_queue.empty():
             tasklist.append(proxy_queue.get())

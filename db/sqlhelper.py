@@ -91,6 +91,9 @@ class SqlHelper(object):
 	        AND proxy_main.`port` = t2.`port`  \
 	        AND proxy_main.id > t2.id;')
 
+    def removeInvalidProxy(self):
+        self.execute('delete from proxy_main where score < 5')
+
     def query(self, sql, count=0):
         conn = self.__get_conn()
         cursor = conn.cursor(cursor=pymysql.cursors.DictCursor)
