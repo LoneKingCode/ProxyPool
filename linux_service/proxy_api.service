@@ -1,5 +1,5 @@
 [Unit]
-Description=test deamon
+Description=proxy_api
 After=rc-local.service
 [Service]
 Type=simple

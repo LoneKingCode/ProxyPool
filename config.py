@@ -14,21 +14,9 @@ API_SERVER_PORT = 8000
 # cookie参数 secret_cookie (有些网站通过第一次访问时返回JS代码来生成新的cookie 之后都需要带上这个cookie访问
 # 不然就返回521错误)
 UrlList = [
-    # {
-    #     'name': '云代理',
-    #     'urls': ['http://www.ip3366.net/free/?stype=%s&page=%s' % (t, p) for t in range(1, 2) for p in range(1, 2)],
-    #     'type': 'xpath',
-    #     'pattern': '//*[@id="list"]/table/tbody/tr[position()>1]',
-    #     'position': {
-    #         'ip': './td[1]',
-    #         'port': './td[2]',
-    #         'type': '',
-    #         'protocol': '',
-    #     },
-    # },
     {
         'name': '云代理',
-        'urls': ['http://www.ip3366.net/free/?stype=%s&page=%s' % (t, p) for t in range(1, 3) for p in range(1, 8)],
+        'urls': ['http://www.ip3366.net/free/?stype=1'],
         'type': 'xpath',
         'pattern': '//*[@id="list"]/table/tbody/tr[position()>1]',
         'position': {
