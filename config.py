@@ -76,6 +76,12 @@ UrlList = [
             'type': './td[3]',
             'protocol': './td[4]'
         }
+    },
+    {
+        'name': '自定义方法',
+        'urls': ['http://www.kuaidaili.com '],
+        'type': 'custom',
+        'methodname': 'custom_fuction'
     }
     ##国内访问不了 代理数量1W+ 但是获取有问题 提示需要执行js 而且5秒后才跳转
     # {
