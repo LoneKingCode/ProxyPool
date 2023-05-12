@@ -83,7 +83,7 @@ def count():
         # / 获取所有记录
         condition = SqlHelper.escape_string(request.args.get('condition', ''))
         if condition:
-            result = sqlhelper.query('select * from Proxy_Main where %s' % condition)
+            result = sqlhelper.query('select * from proxy_main where %s' % condition)
         else:
             result = sqlhelper.get(request.args)
     except:
@@ -101,7 +101,7 @@ def get():
         condition = request.args.get('condition')
         count = request.args.get('count')
         if condition:
-            result = sqlhelper.query('select * from Proxy_Main where %s' % condition, count)
+            result = sqlhelper.query('select * from proxy_main where %s' % condition, count)
         else:
             result = sqlhelper.get(request.args, count)
     except:
@@ -121,7 +121,7 @@ def get_format():
         condition = request.args.get('condition')
         count = request.args.get('count')
         if condition:
-            result = sqlhelper.query('select * from Proxy_Main where %s' % condition, count)
+            result = sqlhelper.query('select * from proxy_main where %s' % condition, count)
         else:
             result = sqlhelper.get(request.args, count)
     except:
@@ -141,8 +141,8 @@ def get_pagedata():
         start = SqlHelper.escape_string(request.values.get('start', 0))
         length = SqlHelper.escape_string(request.values.get('length', 10))
         sql = 'select {0} from {1} where {2} order by {3} limit {4},{5}'
-        result = sqlhelper.query(sql.format('*', 'Proxy_Main', 'country like \'%{0}%\' or area like \'%{0}%\''.format(searchkey), orderby + ' ' + orderdir, start, length))
-        totalcount = sqlhelper.query('select {0} from {1} where {2}'.format('count(*)', 'Proxy_Main', 'country like \'%{0}%\' or area like \'%{0}%\''.format(searchkey)))[0]['count(*)']
+        result = sqlhelper.query(sql.format('*', 'proxy_main', 'country like \'%{0}%\' or area like \'%{0}%\''.format(searchkey), orderby + ' ' + orderdir, start, length))
+        totalcount = sqlhelper.query('select {0} from {1} where {2}'.format('count(*)', 'proxy_main', 'country like \'%{0}%\' or area like \'%{0}%\''.format(searchkey)))[0]['count(*)']
     except:
         return 'error'
     count = 0
