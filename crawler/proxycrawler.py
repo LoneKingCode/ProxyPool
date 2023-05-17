@@ -32,6 +32,19 @@ class ProxyCrawler(object):
 
     @exception
     def run(self):
+        count = 0
+        while count < 10:
+            try:
+                self.__run()
+                count = 0
+            except Exception as e:
+                print('运行出错:{}'.format(e))
+                count += 1
+        print('运行出错超过10次')
+        exit(-1)
+
+    @exception
+    def __run(self):
         self.first_run = True
         self.last_end_datetime = datetime.now()
         while True:
@@ -60,10 +73,10 @@ class ProxyCrawler(object):
                 db_valid = Value('i', 0)
                 db_invalid = Value('i', 0)
 
-                # threadPool = ThreadPoolExecutor(max_workers=config.CHECK_DB_TASK, thread_name_prefix="valid_proxy_")
-                # for proxy in proxies:
-                #     threadPool.submit(check_proxy_from_db, proxy, db_valid, db_invalid)
-                # threadPool.shutdown(wait=True)
+                threadPool = ThreadPoolExecutor(max_workers=config.CHECK_DB_TASK, thread_name_prefix="valid_proxy_")
+                for proxy in proxies:
+                    threadPool.submit(check_proxy_from_db, proxy, db_valid, db_invalid)
+                threadPool.shutdown(wait=True)
 
                 print('\n>>>检查数据库数据完成')
                 proxies = sqlhelper.get()
