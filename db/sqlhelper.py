@@ -3,7 +3,7 @@
 import pymysql
 
 from config import DATABASE_CONFIG
-from util.loghelper import LogHelper
+from util.LogUtil import LogUtil
 
 allow_columns = ["ip", "port", "type", "protocol", "country", "area", "score", "speed"]
 
@@ -67,7 +67,7 @@ class SqlHelper(object):
                 )
                 return self.conn
             except Exception as e:
-                LogHelper.error("获取数据库连接出错:" + str(e))
+                LogUtil.error("获取数据库连接出错:" + str(e))
 
     def execute(self, sql):
         return self.execute_many([sql])
@@ -83,11 +83,11 @@ class SqlHelper(object):
                 conn.commit()
             except Exception as e:
                 conn.rollback()
-                LogHelper.error("执行{0}出错,错误原因:{1}".format(sqls, str(e)))
+                LogUtil.error("执行{0}出错,错误原因:{1}".format(sqls, str(e)))
             finally:
                 self.__close(cursor, conn)
         except Exception as e:
-            LogHelper.error("获取数据库连接出错,语句{0},错误原因:{1}".format(",".join(sqls), str(e)))
+            LogUtil.error("获取数据库连接出错,语句{0},错误原因:{1}".format(",".join(sqls), str(e)))
         return effect_row
 
     # 去重复
@@ -116,7 +116,7 @@ class SqlHelper(object):
             cursor.execute(sql)
             result = cursor.fetchall()
         except Exception as e:
-            LogHelper.error("执行{0}出错,错误原因:{1}".format(sql, str(e)))
+            LogUtil.error("执行{0}出错,错误原因:{1}".format(sql, str(e)))
         finally:
             self.__close(cursor, conn)
         return result
